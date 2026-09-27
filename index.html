@@ -75,7 +75,7 @@
 
   /* Accueil : choix de la séance */
   .today { margin: 4px 2px 6px; }
-  .today b { display: block; font-family: var(--display); font-weight: 700; font-size: 23px; line-height: 1.2; margin-top: 2px; }
+  .today b { display: block; font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.25; margin-top: 2px; }
   .types { display: grid; gap: 10px; }
   .type { display: flex; align-items: center; gap: 12px; text-align: left; background: var(--panel); border: 1px solid var(--line);
     border-radius: 14px; padding: 14px; width: 100%; }
@@ -161,6 +161,68 @@
   .back { display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; color: var(--muted); padding: 2px 0 10px; }
   .empty { color: var(--muted); text-align: center; padding: 48px 16px; }
 
+  /* Séance passée en lecture seule */
+  .ro-top { display: flex; align-items: center; justify-content: space-between; }
+  .ro-top .back { padding-bottom: 0; }
+  .edit-btn { background: var(--accent); color: var(--on-accent); border: 0; border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 14px;
+    display: inline-flex; align-items: center; gap: 6px; }
+  .ro-top + .s-head { margin-top: 10px; }
+  .s-title { font-family: var(--display); font-weight: 700; font-size: 21px; }
+  .s-date { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+  .ro-ex .ex-top { margin-bottom: 4px; }
+  .ro { display: flex; align-items: baseline; gap: 6px; padding: 8px 2px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .ro:first-of-type { border-top: 0; }
+  .ro b { font-size: 17px; }
+  .ro .u { color: var(--muted); font-size: 13px; }
+  .ro .n { font-weight: 700; }
+  .ro small { color: var(--muted); font-size: 12px; }
+  .ro .tag { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 6px; padding: 1px 5px; align-self: center; }
+  .ro .res { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; align-self: center; }
+  .editbar { position: sticky; top: -14px; margin: -14px -16px 12px; padding: 10px 16px; background: var(--accent); color: var(--on-accent);
+    display: flex; align-items: center; gap: 8px; z-index: 3; font-weight: 700; font-size: 14px; }
+  .editbar span { flex: 1; display: inline-flex; align-items: center; gap: 6px; }
+  .editbar button { border: 0; border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: 14px; }
+  .editbar .cancel { background: rgba(28,20,51,.12); color: var(--on-accent); }
+  .editbar .okb { background: var(--on-accent); color: var(--accent); }
+
+  /* Accueil */
+  .hero { background: #262139; border: 1px solid var(--accent); border-radius: 16px; padding: 16px; }
+  .hero .k { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+  .hero b { display: block; font-family: var(--display); font-weight: 700; font-size: 22px; margin: 4px 0 2px; }
+  .hero p { margin: 0 0 14px; color: var(--muted); font-size: 13.5px; }
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .metric { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+  .metric small { display: block; color: var(--muted); font-size: 12px; }
+  .metric b { font-family: var(--display); font-weight: 700; font-size: 22px; }
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px; text-align: center; }
+  .week span { font-size: 11.5px; color: var(--muted); display: grid; gap: 6px; justify-items: center; }
+  .week i { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-style: normal; }
+  .week i.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .week i.today { border-color: var(--peach); }
+  .week i .ic { width: 15px; height: 15px; }
+  .week i span { color: inherit; }
+  .recs { display: grid; gap: 8px; }
+  .rec { display: flex; gap: 12px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; width: 100%; text-align: left; }
+  .rec > .ico { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+  .rec .tx { flex: 1; min-width: 0; font-size: 14px; }
+  .rec .tx b { display: block; font-size: 14.5px; }
+  .rec .tx small { color: var(--muted); font-size: 13px; }
+  .ico.up { background: rgba(155,231,196,.14); color: var(--ok); }
+  .ico.keep { background: rgba(255,173,176,.14); color: var(--fail); }
+  .ico.info { background: rgba(255,226,154,.14); color: var(--half); }
+  .ico.save { background: rgba(184,164,255,.16); color: var(--accent); }
+  .ico.rest { background: rgba(167,211,255,.14); color: var(--near); }
+  .dot { position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%; background: var(--peach); border: 2px solid var(--bg); }
+  #settings-btn { position: relative; }
+
+  /* Sauvegardes */
+  .bk-state { display: flex; gap: 10px; align-items: center; background: var(--panel-2); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; margin-bottom: 12px; }
+  .bk-list .it { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
+  .bk-list .it div { flex: 1; min-width: 0; }
+  .bk-list .it small { display: block; color: var(--muted); font-size: 12.5px; }
+  .bk-list .it button { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; }
+
   /* Feuilles du bas */
   .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 50; opacity: 0; transition: opacity .2s; }
   .backdrop.on { opacity: 1; }
@@ -219,15 +281,17 @@
 <header>
   <h1>FONT<span>E</span></h1>
   <span id="clock"></span>
-  <button class="icon-btn" id="settings-btn" aria-label="Réglages" data-ic="sliders"></button>
+  <button class="icon-btn" id="settings-btn" aria-label="Sauvegardes"><span data-ic="archive"></span></button>
 </header>
 <main>
-  <section class="view active" id="view-today"></section>
+  <section class="view active" id="view-home"></section>
+  <section class="view" id="view-today"></section>
   <section class="view" id="view-history"></section>
   <section class="view" id="view-detail"></section>
 </main>
 <nav>
-  <button class="tab on" data-view="today"><span data-ic="dumbbell"></span>Séance</button>
+  <button class="tab on" data-view="home"><span data-ic="home"></span>Accueil</button>
+  <button class="tab" data-view="today"><span data-ic="dumbbell"></span>Séance</button>
   <button class="tab" data-view="history"><span data-ic="list"></span>Historique</button>
 </nav>
 <div id="toast"></div>
@@ -257,7 +321,12 @@ const ICONS = {
   download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
   upload: '<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',
   repeat: '<path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/>',
-  flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>'
+  flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  archive: '<rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/>',
+  alert: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/>',
+  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+  restore: '<path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5M4 4v4.5h4.5"/><path d="M12 8v4l2.5 2"/>'
 };
 const ic = name => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
 document.querySelectorAll("[data-ic]").forEach(el => el.innerHTML = ic(el.dataset.ic));
@@ -399,11 +468,31 @@ function load() {
   return { app: "fonte", v: 1, sessions: seed() };
 }
 let db = load();
-function save() {
+// changedAt / backupAt : pour savoir s'il y a des changements pas encore exportés
+function save(changed = true) {
+  if (changed) db.changedAt = new Date().toISOString();
   try { localStorage.setItem(KEY, JSON.stringify(db)); }
   catch { toast("Impossible d'enregistrer sur cet appareil"); }
+  updateDot();
 }
-save();
+const needsBackup = () => !db.backupAt || (db.changedAt && db.changedAt > db.backupAt);
+function updateDot() {
+  const b = document.getElementById("settings-btn");
+  if (!b) return;
+  const d = b.querySelector(".dot");
+  if (needsBackup() && !d) b.append(h("span", { class: "dot" }));
+  if (!needsBackup() && d) d.remove();
+}
+
+// Points de restauration gardés sur le téléphone (les 12 derniers)
+const BK = "fonte-backups";
+function snapshots() { try { return JSON.parse(localStorage.getItem(BK)) || []; } catch { return []; } }
+function snapshot(label) {
+  const list = snapshots();
+  list.unshift({ at: new Date().toISOString(), label, n: db.sessions.length, sessions: clone(db.sessions) });
+  try { localStorage.setItem(BK, JSON.stringify(list.slice(0, 12))); } catch {}
+}
+save(false);
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
 const sorted = () => [...db.sessions].sort((a, b) => b.start.localeCompare(a.start));
@@ -434,10 +523,28 @@ function history(name) {
 const working = e => e.sets.filter(r => !r.wu);
 const blankRows = e => e.sets.map(r => ({ kg: r.kg, n: r.n, reps: r.reps, wu: r.wu, mark: null }));
 
+// La séance « logique » = celle qu'on n'a pas faite depuis le plus longtemps
+function nextType() {
+  const lasts = types().map(t => ({ t, s: lastOfType(t) })).filter(x => x.s);
+  if (lasts.length < 2) return null;
+  return lasts.sort((a, b) => a.s.start.localeCompare(b.s.start))[0];
+}
+const daysAgo = d => Math.round((new Date(dateInput(new Date()) + "T12:00:00") - new Date(dateInput(d) + "T12:00:00")) / 864e5);
+const agoText = n => n === 0 ? "aujourd'hui" : n === 1 ? "hier" : `il y a ${n} jours`;
+
 // ---------- Navigation ----------
-let view = "today";
+let view = "home";
 let detailId = null;
+let editing = false;   // séance passée ouverte en mode modification
+let editBackup = null; // copie pour « Annuler »
+let editChanged = null;
+function openDetail(id) {
+  detailId = id; editing = false; editBackup = null;
+  show("detail");
+  document.getElementById("view-detail").scrollTop = 0;
+}
 function show(v) {
+  if (v !== "detail") { editing = false; editBackup = null; }
   view = v;
   document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + v));
   document.querySelectorAll("nav .tab").forEach(t => t.classList.toggle("on", t.dataset.view === v || (v === "detail" && t.dataset.view === "history")));
@@ -448,7 +555,8 @@ document.querySelectorAll("nav .tab").forEach(t => t.onclick = () => {
   show(t.dataset.view);
 });
 function render() {
-  if (view === "today") renderToday();
+  if (view === "home") renderHome();
+  else if (view === "today") renderToday();
   else if (view === "history") renderHistory();
   else if (view === "detail") renderDetail();
 }
@@ -465,22 +573,110 @@ function tick() {
 setInterval(tick, 15000);
 
 // ---------- Accueil ----------
+function recommendations() {
+  const out = [];
+  const cur = active();
+  const nt = nextType();
+  const base = cur || (nt && nt.s);
+  if (base) {
+    for (const e of base.exercises) {
+      const prev = history(e.name).find(x => !cur || x.s.id !== cur.id);
+      if (!prev) continue;
+      const w = working(prev.e), when = fmtShort(new Date(prev.s.start));
+      if (!w.length) continue;
+      const top = Math.max(...w.map(r => r.kg));
+      if (w.every(r => r.mark === "ok")) {
+        const step = top >= 20 ? 2.5 : 1;
+        out.push({ cls: "up", ic: "trend", title: e.name, text: top ? `Tout validé à ${fmtKg(top)} kg le ${when} : essaie ${fmtKg(Math.round((top + step) * 10) / 10)} kg.` : `Tout validé le ${when} : ajoute des reps ou une série.` });
+      } else if (w.some(r => r.mark === "fail")) {
+        out.push({ cls: "keep", ic: "alert", title: e.name, text: `Raté le ${when} : garde le même poids, ou descends un peu.` });
+      } else if (w.filter(r => r.mark === "near" || r.mark === "half").length >= Math.ceil(w.length / 2)) {
+        out.push({ cls: "info", ic: "near", title: e.name, text: `Presque le ${when} : reste à ${fmtKg(top)} kg et vise toutes les reps.` });
+      }
+      if (prev.e.note) out.push({ cls: "info", ic: "note", title: e.name, text: `Note du ${when} : « ${prev.e.note} »` });
+    }
+  }
+  const last = sorted().find(s => s.done);
+  if (last && !cur) {
+    const n = daysAgo(new Date(last.start));
+    if (n >= 4) out.unshift({ cls: "rest", ic: "moon", title: `${n} jours sans séance`, text: "Reprends en douceur : échauffe-toi bien avant les séries lourdes." });
+  }
+  if (needsBackup()) out.push({ cls: "save", ic: "archive", title: "Sauvegarde conseillée", text: db.backupAt ? "Tu as fait des changements depuis ta dernière sauvegarde." : "Tu n'as encore jamais exporté tes séances.", onclick: backupSheet });
+  return out;
+}
+
+function renderHome() {
+  const box = document.getElementById("view-home");
+  box.innerHTML = "";
+  const now = new Date();
+  box.append(h("div", { class: "today" }, h("span", { class: "muted" }, "Aujourd'hui"), h("b", {}, fmtDay(now))));
+
+  // Carte principale : séance en cours ou séance au programme
+  const cur = active(), nt = nextType();
+  if (cur) {
+    box.append(h("div", { class: "hero" }, h("span", { class: "k" }, "En cours"), h("b", {}, cur.type),
+      h("p", {}, `Commencée à ${fmtTime(new Date(cur.start))} · ${cur.exercises.length} exercices`),
+      h("button", { class: "btn primary block", onclick: () => show("today") }, icon("dumbbell"), "Reprendre la séance")));
+  } else if (nt) {
+    box.append(h("div", { class: "hero" }, h("span", { class: "k" }, "Au programme"), h("b", {}, nt.t),
+      h("p", {}, `Dernière fois ${agoText(daysAgo(new Date(nt.s.start)))} (${fmtShort(new Date(nt.s.start))}) · ${nt.s.exercises.length} exercices`),
+      h("div", { style: "display:flex;gap:8px" },
+        h("button", { class: "btn primary", style: "flex:1", onclick: () => startSession(nt.t, nt.s) }, "Commencer"),
+        h("button", { class: "btn", onclick: () => show("today") }, "Autre séance"))));
+  } else {
+    box.append(h("div", { class: "hero" }, h("span", { class: "k" }, "Bienvenue"), h("b", {}, "Première séance"),
+      h("p", {}, "Choisis ou crée ta séance, les exercices seront repris la fois suivante."),
+      h("button", { class: "btn primary block", onclick: () => show("today") }, "Choisir une séance")));
+  }
+
+  const done = sorted().filter(s => s.done);
+  const last = done[0];
+  if (last) {
+    box.append(h("h2", {}, `Dernière séance · ${agoText(daysAgo(new Date(last.start)))}`));
+    box.append(histCard(last));
+  }
+
+  // Semaine en cours (lundi → dimanche)
+  const monday = new Date(now); monday.setHours(12, 0, 0, 0); monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(monday); d.setDate(monday.getDate() + i); return d; });
+  const doneDays = new Set(db.sessions.map(s => s.start.slice(0, 10)));
+  const nWeek = days.filter(d => doneDays.has(dateInput(d))).length;
+  box.append(h("h2", {}, `Cette semaine · ${nWeek} séance${nWeek > 1 ? "s" : ""}`));
+  box.append(h("div", { class: "week" }, ...days.map(d => h("span", {},
+    d.toLocaleDateString("fr-FR", { weekday: "narrow" }).toUpperCase(),
+    h("i", { class: (doneDays.has(dateInput(d)) ? "on" : "") + (sameDay(d, now) ? " today" : "") }, doneDays.has(dateInput(d)) ? icon("ok") : String(d.getDate()))))));
+
+  const month = dateInput(now).slice(0, 7);
+  const inMonth = done.filter(s => s.start.startsWith(month));
+  const okSets = inMonth.reduce((a, s) => a + s.exercises.reduce((b, e) => b + working(e).filter(r => r.mark === "ok").reduce((c, r) => c + r.n, 0), 0), 0);
+  box.append(h("div", { class: "metrics", style: "margin-top:8px" },
+    h("div", { class: "metric" }, h("small", {}, "Séances"), h("b", {}, done.length)),
+    h("div", { class: "metric" }, h("small", {}, "Ce mois-ci"), h("b", {}, inMonth.length)),
+    h("div", { class: "metric" }, h("small", {}, "Séries réussies"), h("b", {}, okSets))));
+
+  const recs = recommendations();
+  if (recs.length) {
+    box.append(h("h2", {}, cur ? "Conseils pour cette séance" : nt ? `Conseils pour ${nt.t}` : "Conseils"));
+    box.append(h("div", { class: "recs" }, ...recs.slice(0, 7).map(r => h(r.onclick ? "button" : "div", { class: "rec", onclick: r.onclick },
+      h("span", { class: "ico " + r.cls }, icon(r.ic)),
+      h("span", { class: "tx" }, h("b", {}, r.title), h("small", {}, r.text)),
+      r.onclick ? icon("chev") : null))));
+  }
+}
+
 function renderToday() {
   const box = document.getElementById("view-today");
   const s = active();
   if (s) { renderSession(s, box); return; }
   box.innerHTML = "";
-  const now = new Date();
-  box.append(h("div", { class: "today" }, h("span", { class: "muted" }, "Aujourd'hui"), h("b", {}, fmtDay(now))));
-  box.append(h("h2", {}, "Quelle séance ?"));
+  box.append(h("div", { class: "today" }, h("span", { class: "muted" }, "Nouvelle séance"), h("b", {}, "Quelle séance ?")));
+  box.append(h("div", { style: "height:12px" }));
 
-  // La séance « logique » = celle qu'on n'a pas faite depuis le plus longtemps
-  const ts = types();
-  const lasts = ts.map(t => ({ t, s: lastOfType(t) }));
-  const next = lasts.filter(x => x.s).sort((a, b) => a.s.start.localeCompare(b.s.start))[0];
+  const lasts = types().map(t => ({ t, s: lastOfType(t) }));
+  const next = nextType();
   const list = h("div", { class: "types" });
   lasts.forEach(({ t, s: last }) => {
-    const isNext = next && next.t === t && lasts.length > 1;
+    const isNext = next && next.t === t;
     list.append(h("button", { class: "type" + (isNext ? " next" : ""), onclick: () => startSession(t, last) },
       h("span", { class: "tx" },
         isNext ? h("span", { class: "badge" }, "Au programme") : null,
@@ -491,12 +687,6 @@ function renderToday() {
   list.append(h("button", { class: "type free", onclick: freeSession },
     h("span", { class: "tx" }, h("b", {}, "Autre séance"), h("small", {}, "Partir de zéro ou créer un nouveau type")), icon("plus")));
   box.append(list);
-
-  const recent = sorted().filter(x => x.done).slice(0, 3);
-  if (recent.length) {
-    box.append(h("h2", {}, "Dernières séances"));
-    recent.forEach(x => box.append(histCard(x)));
-  }
 }
 
 function startSession(type, from) {
@@ -528,7 +718,10 @@ function freeSession() {
 function renderSession(s, box, fromHistory) {
   const y = box.scrollTop;
   box.innerHTML = "";
-  if (fromHistory) box.append(h("button", { class: "back", onclick: () => show("history") }, icon("back"), "Historique"));
+  // Séance passée ouverte en modification : barre « Annuler / OK »
+  if (fromHistory) box.append(h("div", { class: "editbar" }, h("span", {}, icon("pencil"), "Modification"),
+    h("button", { class: "cancel", onclick: cancelEdit }, "Annuler"),
+    h("button", { class: "okb", onclick: confirmEdit }, "OK")));
 
   const start = new Date(s.start);
   const when = s.hasTime ? `${fmtDay(start)} · ${fmtTime(start)}` : fmtDay(start);
@@ -552,8 +745,9 @@ function renderSession(s, box, fromHistory) {
       db.sessions = db.sessions.filter(x => x !== s); save(); render();
     }) }, "Abandonner"));
   } else {
-    foot.append(h("button", { class: "btn block", onclick: () => { if (active()) return toast("Une séance est déjà en cours"); startSession(s.type, s); } }, icon("repeat"), "Refaire cette séance aujourd'hui"));
+    foot.append(h("button", { class: "btn primary block", onclick: confirmEdit }, icon("ok"), "OK, enregistrer les modifications"));
     foot.append(h("button", { class: "btn danger block", onclick: () => confirmSheet("Supprimer cette séance ?", "Elle disparaîtra de l'historique.", "Supprimer", () => {
+      snapshot(`Avant suppression : ${s.type} du ${fmtShort(start)}`);
       db.sessions = db.sessions.filter(x => x !== s); save(); show("history");
     }) }, icon("trash"), "Supprimer la séance"));
   }
@@ -561,6 +755,65 @@ function renderSession(s, box, fromHistory) {
   box.append(h("div", { class: "legend" }, ...MARK_ORDER.map(m => h("span", { class: "c-" + m }, icon(m), h("span", { class: "muted" }, MARKS[m].label)))));
   box.scrollTop = y;
   tick();
+}
+
+// Séance passée en lecture seule : on se balade sans risque de toucher à rien
+function renderReadOnly(s, box) {
+  box.innerHTML = "";
+  const start = new Date(s.start);
+  box.append(h("div", { class: "ro-top" },
+    h("button", { class: "back", onclick: () => show("history") }, icon("back"), "Historique"),
+    h("button", { class: "edit-btn", onclick: startEdit }, icon("pencil"), "Modifier")));
+  const nSets = s.exercises.reduce((a, e) => a + working(e).reduce((b, r) => b + r.n, 0), 0);
+  const dur = s.end && s.hasTime ? fmtDur(Math.round((new Date(s.end) - start) / 60000)) : null;
+  box.append(h("div", { class: "s-head" },
+    h("div", { class: "s-title" }, s.type),
+    h("div", { class: "s-meta" },
+      h("span", { class: "s-date" }, icon("clock"), s.hasTime ? `${fmtDay(start)} · ${fmtTime(start)}` : fmtDay(start)),
+      dur ? h("span", { class: "s-sum" }, dur) : null,
+      h("span", { class: "s-sum" }, `${s.exercises.length} exos · ${nSets} séries`))));
+
+  s.exercises.forEach((e, i) => {
+    const card = h("section", { class: "ex ro-ex" },
+      h("div", { class: "ex-top" }, h("span", { class: "ex-n" }, String(i + 1)),
+        h("span", { class: "ex-name" }, h("b", {}, e.name), h("small", {}, [`${e.reps} reps`, e.set].filter(Boolean).join(" · ")))));
+    e.sets.forEach(r => card.append(h("div", { class: "ro" },
+      r.wu ? h("span", { class: "tag" }, "Échauf.") : null,
+      h("b", {}, fmtKg(r.kg)), r.kg ? h("span", { class: "u" }, "kg") : null,
+      h("span", { class: "n" }, `× ${r.n}`),
+      r.reps && r.reps !== e.reps ? h("small", {}, `${r.reps} reps`) : null,
+      r.mark ? h("span", { class: "res c-" + r.mark }, icon(r.mark), MARKS[r.mark].label) : null)));
+    if (e.note) card.append(h("div", { class: "ex-note" }, icon("note"), e.note));
+    box.append(card);
+  });
+  if (!s.exercises.length) box.append(h("div", { class: "empty" }, "Aucun exercice noté."));
+  box.append(h("div", { class: "s-foot" },
+    h("button", { class: "btn block", onclick: () => { if (active()) return toast("Une séance est déjà en cours"); startSession(s.type, s); } }, icon("repeat"), "Refaire cette séance aujourd'hui")));
+}
+
+function startEdit() {
+  const s = byId(detailId); if (!s) return;
+  editBackup = clone(s); editChanged = db.changedAt; editing = true;
+  document.getElementById("view-detail").scrollTop = 0;
+  render();
+}
+function confirmEdit() {
+  const s = byId(detailId);
+  editing = false;
+  if (s && editBackup && JSON.stringify(s) !== JSON.stringify(editBackup)) {
+    snapshot(`Modification : ${s.type} du ${fmtShort(new Date(s.start))}`);
+    save(); toast("Modifications enregistrées");
+  }
+  editBackup = null; render();
+}
+function cancelEdit() {
+  if (editBackup) {
+    const i = db.sessions.findIndex(x => x.id === editBackup.id);
+    if (i >= 0) db.sessions[i] = editBackup; else db.sessions.push(editBackup);
+    save(false); db.changedAt = editChanged; save(false);
+  }
+  editing = false; editBackup = null; render();
+  toast("Modifications annulées");
 }
 
 function exCard(s, e, i) {
@@ -769,7 +1022,8 @@ function finish(s) {
     if (!keep) s.exercises.forEach(e => { e.sets = e.sets.filter(r => r.mark); });
     s.exercises = s.exercises.filter(e => e.sets.length || e.note);
     s.end = localIso(new Date()); s.done = true;
-    save(); toast("Séance enregistrée"); detailId = s.id; show("detail");
+    save(); snapshot(`Fin de séance : ${s.type} du ${fmtShort(new Date(s.start))}`);
+    toast("Séance enregistrée"); openDetail(s.id);
   };
   if (!pend) return confirmSheet("Terminer la séance ?", "Elle sera rangée dans l'historique.", "Terminer", () => done(true), true);
   const close = sheet("Terminer la séance ?", h("p", { class: "muted", style: "margin:0" },
@@ -785,7 +1039,7 @@ function histCard(s) {
   const cnt = { ok: 0, near: 0, half: 0, fail: 0 };
   s.exercises.forEach(e => working(e).forEach(r => { if (r.mark) cnt[r.mark] += r.n; }));
   const dur = s.done && s.end && s.hasTime ? " · " + fmtDur(Math.round((new Date(s.end) - d) / 60000)) : "";
-  return h("button", { class: "hist-card", onclick: () => { if (!s.done) return show("today"); detailId = s.id; show("detail"); document.getElementById("view-detail").scrollTop = 0; } },
+  return h("button", { class: "hist-card", onclick: () => { if (!s.done) return show("today"); openDetail(s.id); } },
     h("span", { class: "d" }, h("b", {}, d.getDate()), h("small", {}, d.toLocaleDateString("fr-FR", { weekday: "short" }).replace(".", ""))),
     h("span", { class: "tx" }, h("b", {}, s.type),
       s.done ? h("small", {}, `${s.exercises.length} exercices${dur}`) : h("span", { class: "live-tag" }, "En cours")),
@@ -811,7 +1065,8 @@ function renderHistory() {
 function renderDetail() {
   const s = byId(detailId);
   if (!s) return show("history");
-  renderSession(s, document.getElementById("view-detail"), true);
+  const box = document.getElementById("view-detail");
+  if (editing) renderSession(s, box, true); else renderReadOnly(s, box);
 }
 
 // ---------- Feuilles du bas ----------
@@ -833,37 +1088,92 @@ function confirmSheet(title, text, label, fn, primary) {
   ]);
 }
 
-// ---------- Réglages : sauvegarde / restauration ----------
-document.getElementById("settings-btn").onclick = () => {
-  const file = h("input", { type: "file", accept: "application/json,.json", hidden: true });
-  file.onchange = async () => {
-    const f = file.files[0]; if (!f) return;
-    try {
-      const d = JSON.parse(await f.text());
-      if (d.app !== "fonte" || !Array.isArray(d.sessions)) throw 0;
-      const ids = new Set(db.sessions.map(s => s.id));
-      const add = d.sessions.filter(s => s && s.id && !ids.has(s.id) && Array.isArray(s.exercises));
-      db.sessions.push(...add); save(); close(); render();
-      toast(add.length ? `${add.length} séance${add.length > 1 ? "s" : ""} importée${add.length > 1 ? "s" : ""}` : "Rien de nouveau à importer");
-    } catch { toast("Ce fichier n'est pas une sauvegarde Fonte"); }
-  };
-  const exportData = async () => {
-    const name = `fonte-${dateInput(new Date())}.json`;
-    const blob = new Blob([JSON.stringify({ ...db, exportedAt: new Date().toISOString() }, null, 1)], { type: "application/json" });
-    const f = new File([blob], name, { type: "application/json" });
-    if (navigator.canShare && navigator.canShare({ files: [f] })) {
-      try { await navigator.share({ files: [f], title: name }); return; } catch (err) { if (err.name === "AbortError") return; }
-    }
-    const a = h("a", { href: URL.createObjectURL(blob), download: name }); a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  };
-  const close = sheet(h("span", {}, "Réglages", h("small", {}, `${db.sessions.length} séances enregistrées sur ce téléphone`)), h("div", { style: "display:grid;gap:8px" },
-    h("button", { class: "btn block", onclick: exportData }, icon("download"), "Sauvegarder mes séances"),
-    h("button", { class: "btn block", onclick: () => file.click() }, icon("upload"), "Restaurer une sauvegarde"),
-    file,
-    h("p", { class: "muted", style: "font-size:12.5px;margin:6px 2px 0" }, "Tes séances restent sur ce téléphone. Fais une sauvegarde de temps en temps (Fichiers → iCloud Drive).")));
-};
+// ---------- Sauvegardes : exporter, importer, points de restauration ----------
+const fmtStamp = iso => { const d = new Date(iso); return `${d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} à ${fmtTime(d)}`; };
 
+async function exportData() {
+  const name = `fonte-${dateInput(new Date())}.json`;
+  const blob = new Blob([JSON.stringify({ app: "fonte", v: 1, exportedAt: new Date().toISOString(), sessions: db.sessions }, null, 1)], { type: "application/json" });
+  const f = new File([blob], name, { type: "application/json" });
+  if (navigator.canShare && navigator.canShare({ files: [f] })) {
+    try { await navigator.share({ files: [f], title: name }); markExported(); return; }
+    catch (err) { if (err.name === "AbortError") return; }
+  }
+  const a = h("a", { href: URL.createObjectURL(blob), download: name }); a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  markExported();
+}
+function markExported() { db.backupAt = new Date().toISOString(); save(false); toast("Sauvegarde exportée"); render(); }
+
+// Import tolérant : on complète ce qui manque plutôt que de refuser le fichier
+function cleanSession(x) {
+  if (!x || typeof x.start !== "string" || !Array.isArray(x.exercises)) return null;
+  return { id: x.id || uid(), type: x.type || "Séance", start: x.start, hasTime: x.hasTime !== false, end: x.end || null, done: x.done !== false,
+    exercises: x.exercises.filter(e => e && e.name).map(e => ({ id: e.id || uid(), name: String(e.name), reps: +e.reps || 10, set: e.set || "", note: e.note || "",
+      sets: (Array.isArray(e.sets) ? e.sets : []).map(r => ({ kg: +r.kg || 0, n: +r.n || 1, reps: r.reps ? +r.reps : null, wu: !!r.wu, mark: MARKS[r.mark] ? r.mark : null })) })) };
+}
+function importFile(f) {
+  f.text().then(txt => {
+    let d;
+    try { d = JSON.parse(txt); } catch { return toast("Ce fichier n'est pas une sauvegarde Fonte"); }
+    if (!d || !["fonte", "seance"].includes(d.app) || !Array.isArray(d.sessions)) return toast("Ce fichier n'est pas une sauvegarde Fonte");
+    const list = d.sessions.map(cleanSession).filter(Boolean);
+    if (!list.length) return toast("Aucune séance dans ce fichier");
+    const ids = new Set(db.sessions.map(x => x.id));
+    const missing = list.filter(x => !ids.has(x.id));
+    const dates = list.map(x => x.start).sort();
+    const close = sheet("Importer cette sauvegarde ?", h("div", {},
+      h("p", { class: "muted", style: "margin:0 0 6px" }, `${list.length} séance${list.length > 1 ? "s" : ""}, du ${fmtShort(new Date(dates[0]))} au ${fmtShort(new Date(dates[dates.length - 1]))}${d.exportedAt ? ` (exportée le ${fmtStamp(d.exportedAt)})` : ""}.`),
+      h("p", { class: "muted", style: "margin:0;font-size:13px" }, "Un point de restauration est créé avant, tu peux revenir en arrière.")), [
+      h("button", { class: "btn", onclick: () => {
+        close(); snapshot("Avant import (ajout)");
+        db.sessions.push(...missing); save(); render();
+        toast(missing.length ? `${missing.length} séance${missing.length > 1 ? "s" : ""} ajoutée${missing.length > 1 ? "s" : ""}` : "Rien de nouveau à ajouter");
+      } }, `Ajouter les manquantes (${missing.length})`),
+      h("button", { class: "btn primary", onclick: () => {
+        close(); snapshot("Avant import (remplacement)");
+        db.sessions = list; save(); show("home"); toast("Sauvegarde restaurée");
+      } }, "Tout remplacer")
+    ]);
+  });
+}
+
+function backupSheet() {
+  const file = h("input", { type: "file", accept: "application/json,.json", hidden: true });
+  file.onchange = () => { const f = file.files[0]; if (f) { close(); importFile(f); } };
+  const need = needsBackup();
+  const state = h("div", { class: "bk-state" },
+    h("span", { class: "ico " + (need ? "keep" : "up"), style: "width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none" }, icon(need ? "alert" : "ok")),
+    h("span", {}, need ? h("b", {}, "Changements pas encore sauvegardés") : h("b", {}, "Tout est sauvegardé"),
+      h("small", { class: "muted", style: "display:block" }, db.backupAt ? `Dernier export : ${fmtStamp(db.backupAt)}` : "Aucun export pour l'instant")));
+  const list = h("div", { class: "bk-list" });
+  const fill = () => {
+    list.innerHTML = "";
+    const snaps = snapshots();
+    if (!snaps.length) list.append(h("p", { class: "muted", style: "font-size:13px;margin:4px 2px" }, "Aucun point pour l'instant."));
+    snaps.forEach(sn => list.append(h("div", { class: "it" },
+      h("div", {}, sn.label, h("small", {}, `${fmtStamp(sn.at)} · ${sn.n} séances`)),
+      h("button", { onclick: () => { close(); confirmSheet("Revenir à ce point ?", `Tes séances redeviennent celles du ${fmtStamp(sn.at)}. L'état actuel est gardé en point de restauration.`, "Restaurer", () => {
+        snapshot("Avant restauration");
+        db.sessions = clone(sn.sessions); save(); show("home"); toast("Point de restauration appliqué");
+      }, true); } }, "Restaurer"))));
+  };
+  fill();
+  const close = sheet(h("span", {}, "Sauvegardes", h("small", {}, `${db.sessions.length} séances sur ce téléphone`)), h("div", {},
+    state,
+    h("div", { style: "display:grid;gap:8px" },
+      h("button", { class: "btn primary block", onclick: exportData }, icon("download"), "Exporter une sauvegarde"),
+      h("button", { class: "btn block", onclick: () => file.click() }, icon("upload"), "Importer une sauvegarde")),
+    file,
+    h("p", { class: "muted", style: "font-size:12.5px;margin:8px 2px 0" }, "Range le fichier dans Fichiers → iCloud Drive pour le retrouver même si tu changes de téléphone."),
+    h("h2", {}, "Points de restauration"),
+    h("p", { class: "muted", style: "font-size:12.5px;margin:-4px 2px 8px" }, "Créés tout seuls à la fin de chaque séance et après chaque modification. Gardés sur ce téléphone (les 12 derniers)."),
+    h("button", { class: "btn block", style: "margin-bottom:6px", onclick: () => { snapshot("Point manuel"); fill(); toast("Point de restauration créé"); } }, icon("restore"), "Créer un point maintenant"),
+    list));
+}
+document.getElementById("settings-btn").onclick = backupSheet;
+
+updateDot();
 render();
 tick();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});

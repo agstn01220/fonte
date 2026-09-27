@@ -60,7 +60,7 @@
   nav { display: flex; align-items: center; justify-content: space-around; background: var(--panel);
     border-top: 1px solid var(--line); padding: 6px 8px max(8px, calc(var(--safe-b) - 8px)); z-index: 5; }
   nav .tab { background: none; border: 0; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px;
-    font-size: 11px; padding: 4px 18px; }
+    font-size: 11px; padding: 4px 10px; min-width: 64px; }
   nav .tab .ic { width: 23px; height: 23px; }
   nav .tab.on { color: var(--text); }
 
@@ -216,6 +216,28 @@
   .dot { position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%; background: var(--peach); border: 2px solid var(--bg); }
   #settings-btn { position: relative; }
 
+  /* Calendrier */
+  .cal-head { display: flex; align-items: center; gap: 8px; margin: 2px 0 12px; }
+  .cal-head h2 { flex: 1; text-align: center; margin: 0; font-family: var(--display); font-size: 19px; font-weight: 700; text-transform: none; letter-spacing: 0; color: var(--text); }
+  .cal-head h2 small { display: block; font-family: system-ui, -apple-system, sans-serif; font-size: 12.5px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+  .cal-head .icon-btn { width: 40px; height: 40px; }
+  .cal { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px 8px; touch-action: pan-y; }
+  .cal-dow, .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); text-align: center; }
+  .cal-dow span { font-size: 11.5px; color: var(--muted); padding-bottom: 8px; }
+  .cal-grid { row-gap: 6px; }
+  .cd { height: 44px; min-width: 0; display: grid; place-items: center; background: none; border: 0; padding: 0; }
+  .cd span { width: 38px; height: 38px; max-width: 100%; border-radius: 50%; display: grid; place-items: center; font-size: 14.5px; font-variant-numeric: tabular-nums; position: relative; }
+  .cd.out span { color: #4d4868; }
+  .cd.today span { box-shadow: inset 0 0 0 2px var(--peach); }
+  .cd.gym span { color: var(--on-accent); font-weight: 800; }
+  .cd.gym.today span { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--peach); }
+  .cd i { position: absolute; bottom: -2px; right: -2px; min-width: 15px; height: 15px; border-radius: 999px; background: var(--text); color: var(--bg);
+    font-size: 9.5px; font-weight: 800; font-style: normal; display: grid; place-items: center; }
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 12px 4px 0; font-size: 12.5px; color: var(--muted); }
+  .cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .cal-legend b { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .today-btn { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--muted); display: block; margin: 0 auto 10px; }
+
   /* Sauvegardes */
   .bk-state { display: flex; gap: 10px; align-items: center; background: var(--panel-2); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; margin-bottom: 12px; }
   .bk-list .it { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
@@ -286,12 +308,14 @@
 <main>
   <section class="view active" id="view-home"></section>
   <section class="view" id="view-today"></section>
+  <section class="view" id="view-cal"></section>
   <section class="view" id="view-history"></section>
   <section class="view" id="view-detail"></section>
 </main>
 <nav>
   <button class="tab on" data-view="home"><span data-ic="home"></span>Accueil</button>
   <button class="tab" data-view="today"><span data-ic="dumbbell"></span>Séance</button>
+  <button class="tab" data-view="cal"><span data-ic="calendar"></span>Calendrier</button>
   <button class="tab" data-view="history"><span data-ic="list"></span>Historique</button>
 </nav>
 <div id="toast"></div>
@@ -322,6 +346,7 @@ const ICONS = {
   upload: '<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',
   repeat: '<path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/>',
   flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
   home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
   archive: '<rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/>',
   alert: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/>',
@@ -459,7 +484,9 @@ let detailId = null;
 let editing = false;   // séance passée ouverte en mode modification
 let editBackup = null; // copie pour « Annuler »
 let editChanged = null;
+let detailFrom = "history"; // onglet d'où on a ouvert la séance
 function openDetail(id) {
+  if (view !== "detail") detailFrom = view === "today" ? "history" : view;
   detailId = id; editing = false; editBackup = null;
   show("detail");
   document.getElementById("view-detail").scrollTop = 0;
@@ -468,7 +495,7 @@ function show(v) {
   if (v !== "detail") { editing = false; editBackup = null; }
   view = v;
   document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + v));
-  document.querySelectorAll("nav .tab").forEach(t => t.classList.toggle("on", t.dataset.view === v || (v === "detail" && t.dataset.view === "history")));
+  document.querySelectorAll("nav .tab").forEach(t => t.classList.toggle("on", t.dataset.view === v || (v === "detail" && t.dataset.view === detailFrom)));
   render();
 }
 document.querySelectorAll("nav .tab").forEach(t => t.onclick = () => {
@@ -479,6 +506,7 @@ function render() {
   if (view === "home") renderHome();
   else if (view === "today") renderToday();
   else if (view === "history") renderHistory();
+  else if (view === "cal") renderCal();
   else if (view === "detail") renderDetail();
 }
 
@@ -683,7 +711,7 @@ function renderReadOnly(s, box) {
   box.innerHTML = "";
   const start = new Date(s.start);
   box.append(h("div", { class: "ro-top" },
-    h("button", { class: "back", onclick: () => show("history") }, icon("back"), "Historique"),
+    h("button", { class: "back", onclick: () => show(detailFrom) }, icon("back"), { home: "Accueil", cal: "Calendrier" }[detailFrom] || "Historique"),
     h("button", { class: "edit-btn", onclick: startEdit }, icon("pencil"), "Modifier")));
   const nSets = s.exercises.reduce((a, e) => a + working(e).reduce((b, r) => b + r.n, 0), 0);
   const dur = s.end && s.hasTime ? fmtDur(Math.round((new Date(s.end) - start) / 60000)) : null;
@@ -981,6 +1009,71 @@ function renderHistory() {
     if (m !== month) { month = m; box.append(h("h2", {}, m)); }
     box.append(histCard(s));
   });
+}
+
+// ---------- Calendrier ----------
+const TYPE_COLORS = ["#b8a4ff", "#9be7c4", "#ffc3a8", "#a7d3ff", "#ffe29a", "#ffadb0", "#d9c9ff", "#c4f0e0"];
+const typeColor = t => TYPE_COLORS[Math.max(0, types().indexOf(t)) % TYPE_COLORS.length];
+let calY = new Date().getFullYear(), calM = new Date().getMonth();
+function moveMonth(d) {
+  calM += d;
+  if (calM < 0) { calM = 11; calY--; } else if (calM > 11) { calM = 0; calY++; }
+  renderCal();
+}
+function renderCal() {
+  const box = document.getElementById("view-cal");
+  box.innerHTML = "";
+  const now = new Date();
+  const first = new Date(calY, calM, 1, 12);
+  const prefix = `${calY}-${pad(calM + 1)}`;
+  const inMonth = db.sessions.filter(s => s.start.startsWith(prefix)).sort((a, b) => a.start.localeCompare(b.start));
+  const byDay = {};
+  db.sessions.forEach(s => (byDay[s.start.slice(0, 10)] ||= []).push(s));
+  const nDays = new Set(inMonth.map(s => s.start.slice(0, 10))).size;
+
+  box.append(h("div", { class: "cal-head" },
+    h("button", { class: "icon-btn", "aria-label": "Mois précédent", onclick: () => moveMonth(-1) }, icon("back")),
+    h("h2", {}, cap(first.toLocaleDateString("fr-FR", { month: "long", year: "numeric" })),
+      h("small", {}, nDays ? `${nDays} jour${nDays > 1 ? "s" : ""} de salle` : "Aucune séance")),
+    h("button", { class: "icon-btn", "aria-label": "Mois suivant", onclick: () => moveMonth(1) }, icon("chev"))));
+  if (calY !== now.getFullYear() || calM !== now.getMonth())
+    box.append(h("button", { class: "today-btn", onclick: () => { calY = now.getFullYear(); calM = now.getMonth(); renderCal(); } }, "Revenir à aujourd'hui"));
+
+  // Grille du lundi au dimanche, avec les jours des mois voisins en grisé
+  const start = new Date(first); start.setDate(1 - ((first.getDay() + 6) % 7));
+  const weeks = Math.ceil((((first.getDay() + 6) % 7) + new Date(calY, calM + 1, 0).getDate()) / 7);
+  const grid = h("div", { class: "cal-grid" });
+  for (let i = 0; i < weeks * 7; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const key = dateInput(d), list = byDay[key] || [];
+    const cls = ["cd", d.getMonth() !== calM ? "out" : "", sameDay(d, now) ? "today" : "", list.length ? "gym" : ""].join(" ");
+    const bg = list.length ? `background:${typeColor(list[0].type)}` : "";
+    grid.append(h("button", { class: cls, "aria-label": list.length ? `${d.getDate()} : ${list.map(s => s.type).join(", ")}` : String(d.getDate()),
+      onclick: list.length ? () => dayOpen(list) : null },
+      h("span", { style: bg }, String(d.getDate()), list.length > 1 ? h("i", {}, list.length) : null)));
+  }
+  const cal = h("div", { class: "cal" },
+    h("div", { class: "cal-dow" }, ...["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map(x => h("span", {}, x))), grid);
+  // Glisser à gauche / à droite pour changer de mois
+  let x0 = null;
+  cal.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  cal.addEventListener("touchend", e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 60) moveMonth(dx < 0 ? 1 : -1); });
+  box.append(cal);
+
+  const counts = {};
+  inMonth.forEach(s => counts[s.type] = (counts[s.type] || 0) + 1);
+  if (inMonth.length) {
+    box.append(h("div", { class: "cal-legend" }, ...Object.entries(counts).map(([t, n]) =>
+      h("span", {}, h("b", { style: `background:${typeColor(t)}` }), `${t} · ${n}`))));
+    box.append(h("h2", {}, `Séances de ${first.toLocaleDateString("fr-FR", { month: "long" })}`));
+    [...inMonth].reverse().forEach(s => box.append(histCard(s)));
+  }
+}
+function dayOpen(list) {
+  if (list.length === 1) { const s = list[0]; return s.done ? openDetail(s.id) : show("today"); }
+  const close = sheet(fmtDay(new Date(list[0].start)), h("div", {}, ...list.map(s => {
+    const c = histCard(s); c.addEventListener("click", () => close(), true); return c;
+  })));
 }
 
 function renderDetail() {

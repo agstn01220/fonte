@@ -381,91 +381,12 @@ function toast(msg) {
 // Une ligne « 18 kg × 3 » = 3 séries à 18 kg ; reps = null → reps visés de l'exercice.
 const KEY = "fonte-data";
 
-// Mini-format pour ton carnet de notes : w = échauffement, ~ = moyen, . = presque, + = réussi, ! = raté, (6) = 6 reps
-function parseRows(str) {
-  return str.split(/\s+/).filter(Boolean).map(tok => {
-    const m = tok.match(/^(w)?([\d.]+)x(\d+)(?:\((\d+)\))?([~.+!])?$/);
-    return { kg: +m[2], n: +m[3], reps: m[4] ? +m[4] : null, wu: !!m[1],
-      mark: { "~": "half", ".": "near", "+": "ok", "!": "fail" }[m[5]] || null };
-  });
-}
-
-function seed() {
-  const S = [
-    ["2026-09-13", "Pecs triceps", [
-      ["DC alterné", 8, "", "w12x2 18x3~"],
-      ["Triceps barre poulie", 10, "", "w14x1 27x3"],
-      ["DC incliné barre", 8, "", "30x1 30x1~ 25x1"],
-      ["Triceps dos poulie", 10, "Niveau 9", "14x3"],
-      ["Pec fly", 10, "", "39x3"],
-      ["Dips", 8, "", "32x3"],
-      ["Abdo crunch", 10, "", "54x3 59x1"]]],
-    ["2026-09-14", "Jambes", [
-      ["Leg press", 10, "", "w20x1 w40x1 60x1 80x1 90x1"],
-      ["Hip adduction", 8, "", "w25x1 46x1 52x1 52x1"],
-      ["Prone leg curl", 10, "", "43.3x2 41x1"],
-      ["Abdo crunch", 10, "", "59x3"],
-      ["Mollets poids", 20, "", "102x1 14x2"]]],
-    ["2026-09-17", "Dos biceps", [
-      ["Traction", 8, "", "w36x1 w23x1 11.3x1 11.3x1~ 14x1~"],
-      ["Curl marteau debout", 10, "", "w6x1 6x1~ 7x1~ 7x1~"],
-      ["Diverging seated row machine", 10, "", "32x3"],
-      ["Curl pupitre", 10, "", "15x1 10x2"],
-      ["Lat pull", 10, "", "39x3"],
-      ["Avant-bras", 10, "", "10x3"],
-      ["Abdo crunch", 10, "", "59x3 64x1"]]],
-    ["2026-09-19", "Pecs triceps", [
-      ["DC alterné", 8, "", "w10x1 w12x1 18x1 18x1(6) 16x1~"],
-      ["Triceps V poulie", 10, "", "w18x1 25x1 27.3x2"],
-      ["DC incliné barre", 8, "", "30x1 30x1~ 27.5x1"],
-      ["Dips", 10, "", "32x2 29.3x1"],
-      ["Chest press", 10, "", "18x1~ 13.3x2"],
-      ["City dip", 8, "", "41x2 36x1"],
-      ["Abdo crunch", 10, "", "64x4"]]],
-    ["2026-09-20", "Dos biceps", [
-      ["Traction", 10, "", "w36x1 w32x1 14x1 18x2"],
-      ["Curl marteau debout", 10, "", "w3x1 6x3+"],
-      ["Seated row machine", 10, "", "39x3+"],
-      ["Curl normal", 10, "", "6x3+"],
-      ["Tir à bûcheron", 10, "", "14x1 16x2"],
-      ["Avant-bras", 10, "", "10x3+"],
-      ["Abdo crunch", 10, "", "64x4"]]],
-    ["2026-09-21", "Jambes", [
-      ["Leg press", 10, "", "w20x1 w40x1 90x3+"],
-      ["Hip adduction", 10, "", "w25x1 52x3+"],
-      ["Prone leg curl", 10, "", "43.3x3."],
-      ["Mollets leg press", 20, "", "w52x1 73x1 79x2"],
-      ["Abdo levé de jambe", 15, "1 milieu, 1 droite, 1 gauche", "0x3"],
-      ["Abdo rotary torso", 10, "", "41x1 45x2"]]],
-    ["2026-09-23", "Pecs triceps", [
-      ["DC alterné", 8, "", "w10x1 w12x1 18x2 18x1."],
-      ["Triceps barre poulie", 10, "", "w18x1 32x1 37x2"],
-      ["Pec fly", 10, "", "45x3"],
-      ["Triceps tête poulie", 10, "Niveau 12", "18x1 20.3x1 20.3x1."],
-      ["DC incliné barre", 8, "", "30x1 30x1~ 27.5x1"],
-      ["Dips", 10, "", "29.3x1!", "Douleur épaule gauche"],
-      ["Abdo levé de jambe", 10, "", "64x4"]]],
-    ["2026-09-24", "Dos biceps", [
-      ["Traction", 10, "", "w36x1 w32x1 14x2 14x1."],
-      ["Curl marteau debout", 10, "", "w4x1 7x3+"],
-      ["Low row machine", 10, "", "39x3+"],
-      ["Curl normal pupitre", 10, "", "7x3+"],
-      ["Abdominal machine", 10, "", "32x1 36x3"],
-      ["Diverging lat pulldown", 10, "", "36x3+"],
-      ["Avant-bras", 10, "", "15x2 15x1."]]]
-  ];
-  return S.map(([date, type, exs]) => ({
-    id: uid(), type, start: date + "T12:00:00", hasTime: false, end: null, done: true,
-    exercises: exs.map(([name, reps, set, rows, note]) => ({ id: uid(), name, reps, set, note: note || "", sets: parseRows(rows) }))
-  }));
-}
-
 function load() {
   try {
     const d = JSON.parse(localStorage.getItem(KEY));
     if (d && Array.isArray(d.sessions)) return d;
   } catch {}
-  return { app: "fonte", v: 1, sessions: seed() };
+  return { app: "fonte", v: 1, sessions: [] };
 }
 let db = load();
 // changedAt / backupAt : pour savoir s'il y a des changements pas encore exportés
@@ -475,7 +396,7 @@ function save(changed = true) {
   catch { toast("Impossible d'enregistrer sur cet appareil"); }
   updateDot();
 }
-const needsBackup = () => !db.backupAt || (db.changedAt && db.changedAt > db.backupAt);
+const needsBackup = () => db.sessions.length > 0 && (!db.backupAt || (db.changedAt && db.changedAt > db.backupAt));
 function updateDot() {
   const b = document.getElementById("settings-btn");
   if (!b) return;
@@ -601,7 +522,7 @@ function recommendations() {
     const n = daysAgo(new Date(last.start));
     if (n >= 4) out.unshift({ cls: "rest", ic: "moon", title: `${n} jours sans séance`, text: "Reprends en douceur : échauffe-toi bien avant les séries lourdes." });
   }
-  if (needsBackup()) out.push({ cls: "save", ic: "archive", title: "Sauvegarde conseillée", text: db.backupAt ? "Tu as fait des changements depuis ta dernière sauvegarde." : "Tu n'as encore jamais exporté tes séances.", onclick: backupSheet });
+  if (db.sessions.length && needsBackup()) out.push({ cls: "save", ic: "archive", title: "Sauvegarde conseillée", text: db.backupAt ? "Tu as fait des changements depuis ta dernière sauvegarde." : "Tu n'as encore jamais exporté tes séances.", onclick: backupSheet });
   return out;
 }
 
@@ -685,7 +606,7 @@ function renderToday() {
       icon("chev")));
   });
   list.append(h("button", { class: "type free", onclick: freeSession },
-    h("span", { class: "tx" }, h("b", {}, "Autre séance"), h("small", {}, "Partir de zéro ou créer un nouveau type")), icon("plus")));
+    h("span", { class: "tx" }, h("b", {}, lasts.length ? "Autre séance" : "Nouvelle séance"), h("small", {}, lasts.length ? "Partir de zéro ou créer un nouveau type" : "Donne-lui un nom (ex. Pecs triceps), puis ajoute tes exercices")), icon("plus")));
   box.append(list);
 }
 

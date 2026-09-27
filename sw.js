@@ -1,5 +1,5 @@
 // Service worker : garde l'app disponible hors ligne (les séances, elles, sont dans le stockage du téléphone).
-const CACHE = "fonte-v2";
+const CACHE = "fonte-v3";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {

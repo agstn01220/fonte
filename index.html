@@ -114,7 +114,7 @@
   .hint .ic { width: 15px; height: 15px; }
   .ex-note { font-size: 13px; color: var(--half); margin-top: 8px; display: flex; gap: 6px; align-items: center; }
 
-  .rows { display: grid; gap: 6px; margin-top: 10px; }
+  .rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; margin-top: 10px; }
   .row { display: flex; align-items: center; gap: 8px; }
   .w { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 6px; background: var(--panel-2); border: 1px solid var(--line);
     border-radius: 11px; padding: 8px 11px; text-align: left; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; }
@@ -238,6 +238,30 @@
   .cal-legend b { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .today-btn { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--muted); display: block; margin: 0 auto 10px; }
 
+  /* Records */
+  .pr { display: inline-flex; align-items: center; gap: 3px; margin-left: auto; align-self: center; font-size: 10.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .05em; color: #2e1a10; background: var(--peach); border-radius: 999px; padding: 2px 7px; flex: none; }
+  .pr .ic { width: 12px; height: 12px; stroke-width: 2.4; }
+  .ro .pr + .res { margin-left: 6px; }
+  .pr.sm { padding: 3px; }
+  .pr.sm .ic { width: 13px; height: 13px; }
+  .pchip.best { background: rgba(255,195,168,.14); color: var(--peach); }
+  .hist-card .res .c-pr { color: var(--peach); }
+  #toast.prt { background: var(--peach); color: #2e1a10; display: inline-flex; align-items: center; gap: 8px; }
+  #toast.prt .ic { width: 18px; height: 18px; }
+  .tabs2 { display: flex; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 3px; margin-bottom: 14px; }
+  .tabs2 button { flex: 1; background: none; border: 0; border-radius: 9px; padding: 8px; font-weight: 700; font-size: 14px; color: var(--muted);
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .tabs2 button.on { background: var(--panel-2); color: var(--text); }
+  .pr-card { display: flex; align-items: center; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; width: 100%; text-align: left; }
+  .pr-card .tx { flex: 1; min-width: 0; }
+  .pr-card .tx b { display: block; font-size: 15px; }
+  .pr-card .tx small { color: var(--muted); font-size: 12.5px; }
+  .pr-card .kg { text-align: right; font-variant-numeric: tabular-nums; }
+  .pr-card .kg b { font-family: var(--display); font-weight: 700; font-size: 20px; }
+  .pr-card .kg small { display: block; font-size: 12px; color: var(--ok); }
+  .pr-card .ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; background: rgba(255,195,168,.14); color: var(--peach); }
+
   /* Sauvegardes */
   .bk-state { display: flex; gap: 10px; align-items: center; background: var(--panel-2); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; margin-bottom: 12px; }
   .bk-list .it { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
@@ -346,6 +370,7 @@ const ICONS = {
   upload: '<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',
   repeat: '<path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/>',
   flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
+  trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7M10 17h4"/>',
   calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
   home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
   archive: '<rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/>',
@@ -395,9 +420,11 @@ function h(tag, attrs, ...kids) {
 const icon = name => h("span", { html: ic(name), style: "display:contents" });
 
 let toastT;
-function toast(msg) {
+function toast(msg, cls) {
   const t = document.getElementById("toast");
-  t.textContent = msg; t.classList.add("on");
+  t.className = cls || "";
+  t.innerHTML = cls === "prt" ? ic("trophy") : "";
+  t.append(msg); t.classList.add("on");
   clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2200);
 }
 
@@ -603,6 +630,16 @@ function renderHome() {
     h("div", { class: "metric" }, h("small", {}, "Ce mois-ci"), h("b", {}, inMonth.length)),
     h("div", { class: "metric" }, h("small", {}, "Séries réussies"), h("b", {}, okSets))));
 
+  const events = recordBook().flatMap(b => b.events.map(ev => ({ ...ev, name: b.name }))).sort((a, b) => b.s.start.localeCompare(a.s.start)).slice(0, 3);
+  if (events.length) {
+    box.append(h("h2", {}, "Derniers records"));
+    box.append(h("div", { class: "recs" }, ...events.map(ev => h("button", { class: "rec", onclick: () => openDetail(ev.s.id) },
+      h("span", { class: "ico", style: "background:rgba(255,195,168,.14);color:var(--peach)" }, icon("trophy")),
+      h("span", { class: "tx" }, h("b", {}, `${ev.name} · ${fmtKg(ev.kg)} kg`),
+        h("small", {}, `${fmtShort(new Date(ev.s.start))} · +${fmtKg(Math.round((ev.kg - ev.prev) * 10) / 10)} kg par rapport à avant`)),
+      icon("chev")))));
+  }
+
   const recs = recommendations();
   if (recs.length) {
     box.append(h("h2", {}, cur ? "Conseils pour cette séance" : nt ? `Conseils pour ${nt.t}` : "Conseils"));
@@ -731,6 +768,7 @@ function renderReadOnly(s, box) {
       h("b", {}, fmtKg(r.kg)), r.kg ? h("span", { class: "u" }, "kg") : null,
       h("span", { class: "n" }, `× ${r.n}`),
       r.reps && r.reps !== e.reps ? h("small", {}, `${r.reps} reps`) : null,
+      isRecord(s, e, r) ? prBadge() : null,
       r.mark ? h("span", { class: "res c-" + r.mark }, icon(r.mark), MARKS[r.mark].label) : null)));
     if (e.note) card.append(h("div", { class: "ex-note" }, icon("note"), e.note));
     box.append(card);
@@ -779,6 +817,8 @@ function exCard(s, e, i) {
     card.append(h("div", { class: "prev" }, `${fmtShort(new Date(prev.s.start))} :`,
       ...w.map(r => h("span", { class: "pchip" }, `${fmtKg(r.kg)}×${r.n}${r.reps && r.reps !== prev.e.reps ? ` (${r.reps})` : ""}`,
         r.mark ? h("span", { class: "c-" + r.mark, html: ic(r.mark), style: "display:contents" }) : null))));
+    const best = bestBefore(e.name, s);
+    if (best) card.lastChild.append(h("span", { class: "pchip best" }, icon("trophy"), `Record ${fmtKg(best.kg)}`));
     if (!s.done && w.length && w.every(r => r.mark === "ok"))
       card.append(h("div", { class: "hint" }, icon("trend"), "Tout validé la dernière fois : tu peux monter."));
   }
@@ -800,11 +840,16 @@ function rowEl(s, e, r, j) {
   row.append(h("button", { class: "w", onclick: () => wheelSheet(s, e, r, false) },
     r.wu ? h("span", { class: "tag" }, "Échauf.") : null,
     h("b", {}, fmtKg(r.kg)), r.kg ? h("span", { class: "u" }, "kg") : null,
-    h("span", { class: "n" }, `× ${r.n}`), reps));
+    h("span", { class: "n" }, `× ${r.n}`), reps, isRecord(s, e, r) ? prBadge(true) : null));
   const marks = h("div", { class: "marks" });
   (r.wu ? ["ok"] : MARK_ORDER).forEach(m => marks.append(h("button", {
     class: `mk ${m}${r.mark === m ? " on" : ""}`, "aria-label": MARKS[m].label,
-    onclick: () => { r.mark = r.mark === m ? null : m; save(); render(); }
+    onclick: () => {
+      const was = isRecord(s, e, r);
+      r.mark = r.mark === m ? null : m; save(); render();
+      const rr = recordRow(s, e);
+      if (!was && rr && rr.row === r) toast(`Nouveau record : ${e.name} ${fmtKg(r.kg)} kg (avant ${fmtKg(rr.prev.kg)} kg)`, "prt");
+    }
   }, icon(m))));
   row.append(marks);
   return row;
@@ -972,7 +1017,9 @@ function finish(s) {
     s.exercises = s.exercises.filter(e => e.sets.length || e.note);
     s.end = localIso(new Date()); s.done = true;
     save(); snapshot(`Fin de séance : ${s.type} du ${fmtShort(new Date(s.start))}`);
-    toast("Séance enregistrée"); openDetail(s.id);
+    const n = s.exercises.filter(e => recordRow(s, e)).length;
+    n ? toast(`Séance enregistrée · ${n} record${n > 1 ? "s" : ""} battu${n > 1 ? "s" : ""}`, "prt") : toast("Séance enregistrée");
+    openDetail(s.id);
   };
   if (!pend) return confirmSheet("Terminer la séance ?", "Elle sera rangée dans l'historique.", "Terminer", () => done(true), true);
   const close = sheet("Terminer la séance ?", h("p", { class: "muted", style: "margin:0" },
@@ -987,17 +1034,24 @@ function histCard(s) {
   const d = new Date(s.start);
   const cnt = { ok: 0, near: 0, half: 0, fail: 0 };
   s.exercises.forEach(e => working(e).forEach(r => { if (r.mark) cnt[r.mark] += r.n; }));
+  const nPr = s.exercises.filter(e => recordRow(s, e)).length;
   const dur = s.done && s.end && s.hasTime ? " · " + fmtDur(Math.round((new Date(s.end) - d) / 60000)) : "";
   return h("button", { class: "hist-card", onclick: () => { if (!s.done) return show("today"); openDetail(s.id); } },
     h("span", { class: "d" }, h("b", {}, d.getDate()), h("small", {}, d.toLocaleDateString("fr-FR", { weekday: "short" }).replace(".", ""))),
     h("span", { class: "tx" }, h("b", {}, s.type),
       s.done ? h("small", {}, `${s.exercises.length} exercices${dur}`) : h("span", { class: "live-tag" }, "En cours")),
-    h("span", { class: "res" }, ...MARK_ORDER.filter(m => cnt[m]).map(m => h("span", { class: "c-" + m }, icon(m), cnt[m]))));
+    h("span", { class: "res" }, ...MARK_ORDER.filter(m => cnt[m]).map(m => h("span", { class: "c-" + m }, icon(m), cnt[m])),
+      nPr ? h("span", { class: "c-pr" }, icon("trophy"), nPr) : null));
 }
 
+let histMode = "sessions";
 function renderHistory() {
   const box = document.getElementById("view-history");
   box.innerHTML = "";
+  box.append(h("div", { class: "tabs2" },
+    h("button", { class: histMode === "sessions" ? "on" : "", onclick: () => { histMode = "sessions"; renderHistory(); } }, icon("list"), "Séances"),
+    h("button", { class: histMode === "records" ? "on" : "", onclick: () => { histMode = "records"; renderHistory(); } }, icon("trophy"), "Records")));
+  if (histMode === "records") return renderRecords(box);
   const all = sorted();
   if (!all.length) { box.append(h("div", { class: "empty" }, "Aucune séance pour l'instant.")); return; }
   const first = new Date(all[all.length - 1].start);
@@ -1008,6 +1062,63 @@ function renderHistory() {
     const m = cap(new Date(s.start).toLocaleDateString("fr-FR", { month: "long", year: "numeric" }));
     if (m !== month) { month = m; box.append(h("h2", {}, m)); }
     box.append(histCard(s));
+  });
+}
+
+// ---------- Records personnels ----------
+// Compte pour un record : série de travail validée « réussi » ou « moyen » (ou sans symbole dans une séance terminée)
+const countsForPr = (r, s) => !r.wu && r.kg > 0 && (r.mark === "ok" || r.mark === "half" || (s.done && !r.mark));
+function bestBefore(name, cur) {
+  const k = norm(name); let best = null;
+  for (const s of db.sessions) {
+    if (s.id === cur.id || s.start >= cur.start) continue;
+    for (const e of s.exercises) if (norm(e.name) === k)
+      for (const r of e.sets) if (countsForPr(r, s) && (!best || r.kg > best.kg)) best = { kg: r.kg, n: r.n, s };
+  }
+  return best;
+}
+// La ligne de cette séance qui bat le record (la plus lourde) ; rien la toute première fois
+function recordRow(s, e) {
+  const prev = bestBefore(e.name, s);
+  if (!prev) return null;
+  let top = null;
+  for (const r of e.sets) if (countsForPr(r, s) && r.kg > prev.kg && (!top || r.kg > top.kg)) top = r;
+  return top ? { row: top, prev } : null;
+}
+const isRecord = (s, e, r) => { const rr = recordRow(s, e); return !!rr && rr.row === r; };
+const prBadge = compact => h("span", { class: "pr" + (compact ? " sm" : ""), title: "Record" }, icon("trophy"), compact ? null : "Record");
+
+// Carnet de records : meilleur poids par exercice + chaque fois qu'il a été battu
+function recordBook() {
+  const book = {};
+  [...db.sessions].sort((a, b) => a.start.localeCompare(b.start)).forEach(s => s.exercises.forEach(e => {
+    const w = e.sets.filter(r => countsForPr(r, s));
+    if (!w.length) return;
+    const top = w.reduce((a, r) => r.kg > a.kg ? r : a);
+    const k = norm(e.name);
+    const b = book[k] ||= { name: e.name, first: { kg: top.kg, s }, best: null, events: [] };
+    b.name = e.name;
+    if (!b.best) b.best = { kg: top.kg, n: top.n, s };
+    else if (top.kg > b.best.kg) { b.events.push({ kg: top.kg, prev: b.best.kg, s }); b.best = { kg: top.kg, n: top.n, s }; }
+  }));
+  return Object.values(book);
+}
+
+function renderRecords(box) {
+  const book = recordBook().sort((a, b) => (b.events.length > 0) - (a.events.length > 0) || b.best.s.start.localeCompare(a.best.s.start) || a.name.localeCompare(b.name, "fr"));
+  if (!book.length) { box.append(h("div", { class: "empty" }, "Tes records apparaîtront ici après tes premières séances.")); return; }
+  const nEv = book.reduce((a, b) => a + b.events.length, 0);
+  box.append(h("div", { class: "today" }, h("span", { class: "muted" }, `${book.length} exercices suivis`),
+    h("b", {}, `${nEv} record${nEv > 1 ? "s" : ""} battu${nEv > 1 ? "s" : ""}`)));
+  box.append(h("p", { class: "muted", style: "font-size:12.5px;margin:6px 2px 14px" }, "Poids le plus lourd validé (réussi ou moyen) sur chaque exercice. Échauffements, « presque » et « raté » ne comptent pas."));
+  book.forEach(b => {
+    const gain = Math.round((b.best.kg - b.first.kg) * 10) / 10;
+    box.append(h("button", { class: "pr-card", onclick: () => openDetail(b.best.s.id) },
+      h("span", { class: "ico" }, icon("trophy")),
+      h("span", { class: "tx" }, h("b", {}, b.name),
+        h("small", {}, b.events.length ? `Battu ${b.events.length} fois · dernier le ${fmtShort(new Date(b.best.s.start))}` : `Référence du ${fmtShort(new Date(b.best.s.start))}`)),
+      h("span", { class: "kg" }, h("b", {}, `${fmtKg(b.best.kg)} kg`),
+        gain > 0 ? h("small", {}, `+${fmtKg(gain)} kg depuis le début`) : h("small", { style: "color:var(--muted)" }, `× ${b.best.n}`))));
   });
 }
 

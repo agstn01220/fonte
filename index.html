@@ -60,7 +60,7 @@
   nav { display: flex; align-items: center; justify-content: space-around; background: var(--panel);
     border-top: 1px solid var(--line); padding: 6px 8px max(8px, calc(var(--safe-b) - 8px)); z-index: 5; }
   nav .tab { background: none; border: 0; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px;
-    font-size: 11px; padding: 4px 10px; min-width: 64px; }
+    font-size: 10.5px; padding: 4px 4px; min-width: 58px; }
   nav .tab .ic { width: 23px; height: 23px; }
   nav .tab.on { color: var(--text); }
 
@@ -262,6 +262,45 @@
   .pr-card .kg small { display: block; font-size: 12px; color: var(--ok); }
   .pr-card .ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; background: rgba(255,195,168,.14); color: var(--peach); }
 
+  /* Progrès */
+  .big { background: #262139; border: 1px solid var(--accent); border-radius: 16px; padding: 16px; }
+  .big small { display: block; color: var(--muted); font-size: 13px; }
+  .big b { display: block; font-family: var(--display); font-weight: 800; font-size: 38px; line-height: 1.1; margin: 4px 0; color: var(--text); }
+  .big b.neg { color: var(--fail); }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px 11px; min-width: 0; }
+  .tile small { display: block; color: var(--muted); font-size: 11.5px; line-height: 1.25; min-height: 29px; }
+  .tile b { font-family: var(--display); font-weight: 700; font-size: 19px; white-space: nowrap; }
+  .tile b span { font-family: system-ui, -apple-system, sans-serif; font-size: 12px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+  .chart-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+  .chart-card .ct { font-weight: 700; font-size: 15px; }
+  .chart-card .cs { color: var(--muted); font-size: 12.5px; margin: 2px 0 10px; }
+  .chart { position: relative; touch-action: pan-y; }
+  .chart svg { display: block; overflow: visible; }
+  .chart .ax { font-size: 10.5px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .tip { position: absolute; top: 0; pointer-events: none; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 6px 9px; font-size: 12.5px; white-space: nowrap; opacity: 0; transition: opacity .1s; z-index: 2; font-variant-numeric: tabular-nums; }
+  .tip b { display: block; font-size: 13.5px; }
+  .tip small { color: var(--muted); }
+  .chart.on .tip { opacity: 1; }
+  .ex-pick { width: 100%; appearance: none; -webkit-appearance: none; background: var(--panel-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a39fbd' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center / 18px;
+    border: 1px solid var(--line); border-radius: 10px; padding: 10px 36px 10px 12px; font: inherit; font-size: 16px; color: var(--text); margin-bottom: 10px; }
+  .ex-sum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 10px; text-align: center; }
+  .ex-sum div { background: var(--panel-2); border-radius: 10px; padding: 7px 4px; }
+  .ex-sum small { display: block; color: var(--muted); font-size: 11px; }
+  .ex-sum b { font-size: 15px; font-variant-numeric: tabular-nums; }
+  .stack { display: flex; gap: 2px; height: 14px; margin: 4px 0 12px; }
+  .stack span { border-radius: 2px; min-width: 3px; }
+  .stack span:first-child { border-radius: 4px 2px 2px 4px; }
+  .stack span:last-child { border-radius: 2px 4px 4px 2px; }
+  .mleg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; font-size: 13px; }
+  .mleg span { display: flex; align-items: center; gap: 6px; }
+  .mleg em { font-style: normal; margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .hbar { display: grid; grid-template-columns: minmax(0, 1fr) 2fr auto; align-items: center; gap: 10px; font-size: 13.5px; padding: 5px 0; }
+  .hbar > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hbar i { display: block; height: 10px; border-radius: 2px 4px 4px 2px; }
+  .hbar em { font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums; }
+
   /* Sauvegardes */
   .bk-state { display: flex; gap: 10px; align-items: center; background: var(--panel-2); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; margin-bottom: 12px; }
   .bk-list .it { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
@@ -333,6 +372,7 @@
   <section class="view active" id="view-home"></section>
   <section class="view" id="view-today"></section>
   <section class="view" id="view-cal"></section>
+  <section class="view" id="view-prog"></section>
   <section class="view" id="view-history"></section>
   <section class="view" id="view-detail"></section>
 </main>
@@ -340,6 +380,7 @@
   <button class="tab on" data-view="home"><span data-ic="home"></span>Accueil</button>
   <button class="tab" data-view="today"><span data-ic="dumbbell"></span>Séance</button>
   <button class="tab" data-view="cal"><span data-ic="calendar"></span>Calendrier</button>
+  <button class="tab" data-view="prog"><span data-ic="trend"></span>Progrès</button>
   <button class="tab" data-view="history"><span data-ic="list"></span>Historique</button>
 </nav>
 <div id="toast"></div>
@@ -534,6 +575,7 @@ function render() {
   else if (view === "today") renderToday();
   else if (view === "history") renderHistory();
   else if (view === "cal") renderCal();
+  else if (view === "prog") renderProg();
   else if (view === "detail") renderDetail();
 }
 
@@ -1120,6 +1162,206 @@ function renderRecords(box) {
       h("span", { class: "kg" }, h("b", {}, `${fmtKg(b.best.kg)} kg`),
         gain > 0 ? h("small", {}, `+${fmtKg(gain)} kg depuis le début`) : h("small", { style: "color:var(--muted)" }, `× ${b.best.n}`))));
   });
+}
+
+// ---------- Progrès : courbes et statistiques ----------
+let progEx = null;
+const asc = (a, b) => a.start.localeCompare(b.start);
+const topRow = (s, e) => { const w = e.sets.filter(r => countsForPr(r, s)); return w.length ? w.reduce((a, r) => r.kg > a.kg ? r : a) : null; };
+function exSeries(name) {
+  const k = norm(name), out = [];
+  db.sessions.filter(s => s.done).sort(asc).forEach(s => {
+    const e = s.exercises.find(x => norm(x.name) === k);
+    const r = e && topRow(s, e);
+    if (r) out.push({ s, e, r });
+  });
+  return out;
+}
+const niceStep = raw => { const p = Math.pow(10, Math.floor(Math.log10(raw || 1))), n = raw / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p; };
+const shortDate = d => d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }).replace(".", "");
+const fmtNum = (v, d = 1) => (Math.round(v * 10 ** d) / 10 ** d).toString().replace(".", ",");
+
+// Courbe (une seule série) avec axe des temps, repère au doigt et info-bulle
+function lineChart(pts, { yFmt, tip, zero }) {
+  const W = Math.max(260, document.getElementById("view-prog").clientWidth - 32 - 30), H = 190, L = 40, R = 12, T = 12, B = 24;
+  const ys = pts.map(p => p.y);
+  let lo = Math.min(...ys, zero ? 0 : Infinity), hi = Math.max(...ys, zero ? 0 : -Infinity);
+  if (lo === hi) { lo -= 1; hi += 1; }
+  const pad = (hi - lo) * 0.12;
+  hi += pad; if (!(zero && lo === 0)) lo = lo >= 0 ? Math.max(0, lo - pad) : lo - pad;
+  const step = niceStep((hi - lo) / 3);
+  lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+  const t0 = pts[0].x, t1 = pts[pts.length - 1].x;
+  const X = t => t1 === t0 ? L + (W - L - R) / 2 : L + (t - t0) / (t1 - t0) * (W - L - R);
+  const Y = v => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  let g = "";
+  for (let v = lo; v <= hi + 1e-9; v += step)
+    g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)" stroke-width="1"${Math.abs(v) < 1e-9 && zero ? "" : ' stroke-dasharray="2 4"'}/><text class="ax" x="${L - 6}" y="${Y(v) + 3.5}" text-anchor="end">${yFmt(v)}</text>`;
+  const labs = [pts[0], pts[pts.length - 1]];
+  if (W > 300 && pts.length > 2) labs.splice(1, 0, pts[Math.floor(pts.length / 2)]);
+  const seen = [];
+  labs.forEach((p, i) => { const x = X(p.x); if (seen.some(sx => Math.abs(sx - x) < 50)) return; seen.push(x);
+    g += `<text class="ax" x="${x}" y="${H - 6}" text-anchor="${i === 0 ? "start" : i === labs.length - 1 ? "end" : "middle"}">${shortDate(new Date(p.x))}</text>`; });
+  const line = pts.map((p, i) => `${i ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join("");
+  const area = `${line}L${X(t1).toFixed(1)},${Y(Math.max(lo, 0)).toFixed(1)}L${X(t0).toFixed(1)},${Y(Math.max(lo, 0)).toFixed(1)}Z`;
+  const dots = pts.map(p => p.hl
+    ? `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="5.5" style="fill:var(--peach);stroke:var(--panel)" stroke-width="2"/>`
+    : `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="4" style="fill:var(--accent);stroke:var(--panel)" stroke-width="2"/>`).join("");
+  const wrap = h("div", { class: "chart" });
+  wrap.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img">${g}
+    <path d="${area}" style="fill:var(--accent)" opacity=".10"/><path d="${line}" fill="none" style="stroke:var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <line class="cross" y1="${T}" y2="${H - B}" style="stroke:var(--muted)" stroke-width="1" opacity="0"/>${dots}
+    <circle class="focus" r="7" style="fill:none;stroke:var(--text)" stroke-width="2" opacity="0"/></svg><div class="tip"></div>`;
+  const svg = wrap.querySelector("svg"), tipEl = wrap.querySelector(".tip"), cross = wrap.querySelector(".cross"), focus = wrap.querySelector(".focus");
+  const pick = ev => {
+    const rc = svg.getBoundingClientRect(), x = (ev.clientX - rc.left) * W / rc.width;
+    const p = pts.reduce((a, q) => Math.abs(X(q.x) - x) < Math.abs(X(a.x) - x) ? q : a);
+    const px = X(p.x), py = Y(p.y);
+    cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.setAttribute("opacity", ".6");
+    focus.setAttribute("cx", px); focus.setAttribute("cy", py); focus.setAttribute("opacity", "1");
+    tipEl.innerHTML = tip(p); wrap.classList.add("on");
+    const tw = tipEl.offsetWidth; tipEl.style.left = Math.min(Math.max(0, px - tw / 2), W - tw) + "px";
+    tipEl.style.top = Math.max(-8, py - tipEl.offsetHeight - 14) + "px";
+  };
+  svg.addEventListener("pointerdown", pick); svg.addEventListener("pointermove", pick);
+  svg.addEventListener("pointerleave", () => { wrap.classList.remove("on"); cross.setAttribute("opacity", "0"); focus.setAttribute("opacity", "0"); });
+  return wrap;
+}
+
+// Barres verticales (volume par semaine)
+function barChart(bars, { yFmt, tip }) {
+  const W = Math.max(260, document.getElementById("view-prog").clientWidth - 32 - 30), H = 170, L = 40, R = 4, T = 10, B = 24;
+  const hi0 = Math.max(...bars.map(b => b.y), 1), step = niceStep(hi0 / 3), hi = Math.ceil(hi0 / step) * step;
+  const bw = (W - L - R) / bars.length, Y = v => T + (1 - v / hi) * (H - T - B);
+  let g = "";
+  for (let v = 0; v <= hi + 1e-9; v += step)
+    g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)"${v ? ' stroke-dasharray="2 4"' : ""}/><text class="ax" x="${L - 6}" y="${Y(v) + 3.5}" text-anchor="end">${yFmt(v)}</text>`;
+  const w = Math.max(3, Math.min(26, bw - 2));
+  bars.forEach((b, i) => {
+    const x = L + i * bw + (bw - w) / 2, y = Y(b.y), hgt = H - B - y;
+    if (b.y > 0) g += `<path d="M${x},${H - B}V${y + Math.min(4, hgt)}q0,-4 4,-4h${w - 8}q4,0 4,4V${H - B}Z" style="fill:var(--accent)"${b.cur ? ' opacity=".55"' : ""}/>`;
+  });
+  [0, bars.length - 1].forEach((i, k) => { if (k && i === 0) return;
+    g += `<text class="ax" x="${L + i * bw + bw / 2}" y="${H - 6}" text-anchor="${k ? "end" : "start"}">${bars[i].label}</text>`; });
+  const wrap = h("div", { class: "chart" });
+  wrap.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img">${g}<rect class="hov" y="${T}" height="${H - T - B}" style="fill:var(--text)" opacity="0"/></svg><div class="tip"></div>`;
+  const svg = wrap.querySelector("svg"), tipEl = wrap.querySelector(".tip"), hov = wrap.querySelector(".hov");
+  const pick = ev => {
+    const rc = svg.getBoundingClientRect(), x = (ev.clientX - rc.left) * W / rc.width;
+    const i = Math.min(bars.length - 1, Math.max(0, Math.floor((x - L) / bw)));
+    hov.setAttribute("x", L + i * bw); hov.setAttribute("width", bw); hov.setAttribute("opacity", ".06");
+    tipEl.innerHTML = tip(bars[i]); wrap.classList.add("on");
+    const tw = tipEl.offsetWidth, cx = L + i * bw + bw / 2;
+    tipEl.style.left = Math.min(Math.max(0, cx - tw / 2), W - tw) + "px"; tipEl.style.top = "-10px";
+  };
+  svg.addEventListener("pointerdown", pick); svg.addEventListener("pointermove", pick);
+  svg.addEventListener("pointerleave", () => { wrap.classList.remove("on"); hov.setAttribute("opacity", "0"); });
+  return wrap;
+}
+
+function renderProg() {
+  const box = document.getElementById("view-prog");
+  box.innerHTML = "";
+  const done = db.sessions.filter(s => s.done).sort(asc);
+  if (!done.length) { box.append(h("div", { class: "empty" }, "Tes courbes apparaîtront ici après tes premières séances.")); return; }
+  const first = new Date(done[0].start), now = new Date();
+
+  // Exercices suivis au moins 2 fois : base de la progression
+  const book = recordBook();
+  const series = book.map(b => ({ b, pts: exSeries(b.name) })).filter(x => x.pts.length);
+  const tracked = series.filter(x => x.pts.length >= 2);
+  const firstKg = {}; tracked.forEach(x => firstKg[norm(x.b.name)] = x.pts[0].r.kg);
+  const gains = tracked.map(x => x.b.best.kg / x.pts[0].r.kg - 1);
+  const avgGain = gains.length ? gains.reduce((a, v) => a + v, 0) / gains.length * 100 : null;
+
+  box.append(h("div", { class: "big" },
+    h("small", {}, "Progression moyenne de tes charges"),
+    h("b", { class: avgGain < 0 ? "neg" : "" }, avgGain == null ? "—" : `${avgGain >= 0 ? "+" : ""}${fmtNum(avgGain)} %`),
+    h("small", {}, avgGain == null ? "Refais un exercice une 2e fois pour voir ta progression." : `Sur ${tracked.length} exercice${tracked.length > 1 ? "s" : ""} faits au moins 2 fois, depuis le ${first.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}.`)));
+
+  // Tuiles de stats
+  const weeks = Math.max(1, Math.ceil((daysAgo(first) + 1) / 7));
+  let vol = 0; const cnt = { ok: 0, near: 0, half: 0, fail: 0 };
+  done.forEach(s => s.exercises.forEach(e => working(e).forEach(r => {
+    if (r.mark) cnt[r.mark] += r.n;
+    if (r.kg > 0 && r.mark !== "fail") vol += r.kg * r.n * (r.reps || e.reps);
+  })));
+  const marked = cnt.ok + cnt.near + cnt.half + cnt.fail;
+  const nPr = book.reduce((a, b) => a + b.events.length, 0);
+  const tile = (label, val, unit) => h("div", { class: "tile" }, h("small", {}, label), h("b", {}, val, unit ? h("span", {}, unit) : null));
+  box.append(h("div", { class: "tiles" },
+    tile("Séances", done.length),
+    tile("Par semaine", fmtNum(done.length / weeks)),
+    tile("Records battus", nPr),
+    tile("Soulevé au total", vol >= 1000 ? fmtNum(vol / 1000) : Math.round(vol), vol >= 1000 ? "t" : "kg"),
+    tile("Séries réussies", marked ? Math.round(cnt.ok / marked * 100) : "—", marked ? "%" : ""),
+    tile("Semaines", weeks)));
+
+  // Courbe d'un exercice
+  if (series.length) {
+    const opts = [...series].sort((a, b) => b.pts.length - a.pts.length || a.b.name.localeCompare(b.b.name, "fr"));
+    if (!progEx || !opts.some(o => norm(o.b.name) === progEx)) progEx = norm(opts[0].b.name);
+    const cur = opts.find(o => norm(o.b.name) === progEx);
+    const sel = h("select", { class: "ex-pick", "aria-label": "Exercice", onchange: ev => { progEx = ev.target.value; renderProg(); } },
+      ...opts.map(o => h("option", { value: norm(o.b.name), selected: norm(o.b.name) === progEx || null }, `${o.b.name} (${o.pts.length} séance${o.pts.length > 1 ? "s" : ""})`)));
+    let best = -Infinity;
+    const pts = cur.pts.map(({ s, e, r }) => { const hl = best > -Infinity && r.kg > best; best = Math.max(best, r.kg); return { x: new Date(s.start).getTime(), y: r.kg, hl, s, r, e }; });
+    const card = h("div", { class: "chart-card" }, h("div", { class: "ct" }, "Évolution par exercice"),
+      h("div", { class: "cs" }, "Poids de travail le plus lourd validé à chaque séance. En pêche : record battu."), sel);
+    if (pts.length >= 2) card.append(lineChart(pts, { yFmt: v => fmtNum(v), tip: p =>
+      `<b>${fmtKg(p.y)} kg × ${p.r.n}</b><small>${fmtShort(new Date(p.x))}${p.hl ? " · record" : ""}${p.r.mark ? " · " + MARKS[p.r.mark].label.toLowerCase() : ""}</small>` }));
+    else card.append(h("p", { class: "muted", style: "font-size:13px;margin:4px 0" }, `Une seule séance pour l'instant (${fmtKg(pts[0].y)} kg le ${fmtShort(new Date(pts[0].x))}). La courbe apparaît dès la 2e.`));
+    const f = pts[0].y, l = pts[pts.length - 1].y, top = Math.max(...pts.map(p => p.y));
+    const diff = Math.round((l - f) * 10) / 10;
+    card.append(h("div", { class: "ex-sum" },
+      h("div", {}, h("small", {}, "Début"), h("b", {}, `${fmtKg(f)} kg`)),
+      h("div", {}, h("small", {}, "Dernière fois"), h("b", {}, `${fmtKg(l)} kg`)),
+      h("div", {}, h("small", {}, "Évolution"), h("b", { style: diff > 0 ? "color:var(--ok)" : diff < 0 ? "color:var(--fail)" : "" },
+        `${diff > 0 ? "+" : ""}${fmtNum(diff)} kg${f > 0 && diff ? ` (${diff > 0 ? "+" : ""}${Math.round(diff / f * 100)} %)` : ""}`))));
+    if (top > l) card.append(h("p", { class: "muted", style: "font-size:12.5px;margin:8px 2px 0" }, `Record : ${fmtKg(top)} kg.`));
+    box.append(h("h2", {}, "Par exercice"), card);
+  }
+
+  // Progression globale au fil des séances
+  const gPts = done.map(s => {
+    const rs = s.exercises.map(e => { const k = norm(e.name), r = firstKg[k] && topRow(s, e); return r ? r.kg / firstKg[k] - 1 : null; }).filter(v => v != null);
+    return rs.length ? { x: new Date(s.start).getTime(), y: rs.reduce((a, v) => a + v, 0) / rs.length * 100, s, n: rs.length } : null;
+  }).filter(Boolean);
+  if (gPts.length >= 2) {
+    box.append(h("h2", {}, "Progression globale"), h("div", { class: "chart-card" },
+      h("div", { class: "ct" }, "Tes charges par rapport à ta 1re fois"),
+      h("div", { class: "cs" }, "Moyenne sur les exercices de chaque séance. 0 % = ton poids de départ."),
+      lineChart(gPts, { zero: true, yFmt: v => `${v > 0 ? "+" : ""}${fmtNum(v, 0)} %`, tip: p =>
+        `<b>${p.y >= 0 ? "+" : ""}${fmtNum(p.y)} %</b><small>${fmtShort(new Date(p.x))} · ${p.s.type}</small>` })));
+  }
+
+  // Volume par semaine
+  const monday = d => { const m = new Date(d); m.setHours(12, 0, 0, 0); m.setDate(m.getDate() - ((m.getDay() + 6) % 7)); return m; };
+  const wk = []; for (let m = monday(first); m <= now; m.setDate(m.getDate() + 7)) wk.push({ key: dateInput(m), d: new Date(m), y: 0, n: 0 });
+  done.forEach(s => { const k = dateInput(monday(new Date(s.start))), w = wk.find(x => x.key === k); if (!w) return; w.n++;
+    s.exercises.forEach(e => working(e).forEach(r => { if (r.kg > 0 && r.mark !== "fail") w.y += r.kg * r.n * (r.reps || e.reps); })); });
+  const bars = wk.slice(-16).map((w, i, a) => ({ ...w, label: shortDate(w.d), cur: i === a.length - 1 && sameDay(monday(now), w.d) }));
+  box.append(h("h2", {}, "Volume par semaine"), h("div", { class: "chart-card" },
+    h("div", { class: "ct" }, "Kilos soulevés"), h("div", { class: "cs" }, "Poids × séries × reps, séries ratées exclues. Barre claire : semaine en cours."),
+    barChart(bars, { yFmt: v => v >= 1000 ? `${fmtNum(v / 1000)} t` : Math.round(v), tip: b =>
+      `<b>${b.y >= 1000 ? fmtNum(b.y / 1000) + " t" : Math.round(b.y) + " kg"}</b><small>Semaine du ${shortDate(b.d)} · ${b.n} séance${b.n > 1 ? "s" : ""}</small>` })));
+
+  // Résultats des séries
+  if (marked) {
+    const col = { ok: "var(--ok)", near: "var(--near)", half: "var(--half)", fail: "var(--fail)" };
+    box.append(h("h2", {}, "Résultats de tes séries"), h("div", { class: "chart-card" },
+      h("div", { class: "cs", style: "margin-top:0" }, `${marked} séries notées`),
+      h("div", { class: "stack" }, ...MARK_ORDER.filter(m => cnt[m]).map(m => h("span", { style: `flex:${cnt[m]};background:${col[m]}`, title: MARKS[m].label }))),
+      h("div", { class: "mleg" }, ...MARK_ORDER.map(m => h("span", {}, h("span", { class: "c-" + m, html: ic(m), style: "display:contents" }), MARKS[m].label,
+        h("em", {}, `${Math.round(cnt[m] / marked * 100)} %`))))));
+  }
+
+  // Répartition par type de séance
+  const byType = {}; done.forEach(s => byType[s.type] = (byType[s.type] || 0) + 1);
+  const maxT = Math.max(...Object.values(byType));
+  box.append(h("h2", {}, "Séances par type"), h("div", { class: "chart-card" },
+    ...Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([t, n]) => h("div", { class: "hbar" },
+      h("span", {}, t), h("span", {}, h("i", { style: `width:${n / maxT * 100}%;background:${typeColor(t)}` })), h("em", {}, n)))));
 }
 
 // ---------- Calendrier ----------

@@ -602,10 +602,14 @@ function recommendations() {
       if (!prev) continue;
       const w = working(prev.e), when = fmtShort(new Date(prev.s.start));
       if (!w.length) continue;
-      const top = Math.max(...w.map(r => r.kg));
+      const as = isAssisted(e.name);
+      const top = as ? Math.min(...w.map(r => r.kg)) : Math.max(...w.map(r => r.kg));
       if (w.every(r => r.mark === "ok")) {
         const step = top >= 20 ? 2.5 : 1;
-        out.push({ cls: "up", ic: "trend", title: e.name, text: top ? `Tout validé à ${fmtKg(top)} kg le ${when} : essaie ${fmtKg(Math.round((top + step) * 10) / 10)} kg.` : `Tout validé le ${when} : ajoute des reps ou une série.` });
+        const target = Math.round((as ? Math.max(0, top - step) : top + step) * 10) / 10;
+        out.push({ cls: "up", ic: "trend", title: e.name, text: as
+          ? (top ? `Tout validé avec ${fmtKg(top)} kg d'assistance le ${when} : essaie ${target ? fmtKg(target) + " kg" : "sans assistance"}.` : `Tout validé sans assistance le ${when} : ajoute des reps ou une série.`)
+          : top ? `Tout validé à ${fmtKg(top)} kg le ${when} : essaie ${fmtKg(target)} kg.` : `Tout validé le ${when} : ajoute des reps ou une série.` });
       } else if (w.some(r => r.mark === "fail")) {
         out.push({ cls: "keep", ic: "alert", title: e.name, text: `Raté le ${when} : garde le même poids, ou descends un peu.` });
       } else if (w.filter(r => r.mark === "near" || r.mark === "half").length >= Math.ceil(w.length / 2)) {
@@ -672,13 +676,13 @@ function renderHome() {
     h("div", { class: "metric" }, h("small", {}, "Ce mois-ci"), h("b", {}, inMonth.length)),
     h("div", { class: "metric" }, h("small", {}, "Séries réussies"), h("b", {}, okSets))));
 
-  const events = recordBook().flatMap(b => b.events.map(ev => ({ ...ev, name: b.name }))).sort((a, b) => b.s.start.localeCompare(a.s.start)).slice(0, 3);
+  const events = recordBook().flatMap(b => b.events.map(ev => ({ ...ev, name: b.name, assisted: b.assisted }))).sort((a, b) => b.s.start.localeCompare(a.s.start)).slice(0, 3);
   if (events.length) {
     box.append(h("h2", {}, "Derniers records"));
     box.append(h("div", { class: "recs" }, ...events.map(ev => h("button", { class: "rec", onclick: () => openDetail(ev.s.id) },
       h("span", { class: "ico", style: "background:rgba(255,195,168,.14);color:var(--peach)" }, icon("trophy")),
       h("span", { class: "tx" }, h("b", {}, `${ev.name} · ${fmtKg(ev.kg)} kg`),
-        h("small", {}, `${fmtShort(new Date(ev.s.start))} · +${fmtKg(Math.round((ev.kg - ev.prev) * 10) / 10)} kg par rapport à avant`)),
+        h("small", {}, `${fmtShort(new Date(ev.s.start))} · ${ev.assisted ? `${fmtNum(Math.abs(ev.kg - ev.prev))} kg d'assistance en moins` : `+${fmtNum(ev.kg - ev.prev)} kg par rapport à avant`}`)),
       icon("chev")))));
   }
 
@@ -848,7 +852,7 @@ function cancelEdit() {
 function exCard(s, e, i) {
   const prev = findPrev(e.name, s);
   const card = h("section", { class: "ex" });
-  const sub = [`${e.reps} reps`, e.set].filter(Boolean).join(" · ");
+  const sub = [`${e.reps} reps`, isAssisted(e.name) ? "assisté" : "", e.set].filter(Boolean).join(" · ");
   card.append(h("div", { class: "ex-top" },
     h("span", { class: "ex-n" }, String(i + 1)),
     h("button", { class: "ex-name", onclick: () => exSheet(s, e) }, h("b", {}, e.name), h("small", {}, sub)),
@@ -972,6 +976,8 @@ function exSheet(s, e) {
   const note = h("input", { value: e ? e.note || "" : "", placeholder: "Ex. douleur épaule gauche" });
   const rb = h("b", {}, String(reps));
   const step = d => { reps = Math.max(1, Math.min(50, reps + d)); rb.textContent = reps; };
+  const assist = h("button", { class: "switch" + (e && isAssisted(oldName) ? " on" : ""), "aria-label": "Machine assistée" });
+  assist.onclick = () => assist.classList.toggle("on");
   const everywhere = h("button", { class: "switch" });
   const renameRow = h("div", { class: "toggle", hidden: true }, h("span", { style: "font-size:14px" }, "Renommer aussi dans l'historique"), everywhere);
   everywhere.onclick = () => everywhere.classList.toggle("on");
@@ -988,6 +994,8 @@ function exSheet(s, e) {
     renameRow,
     h("div", { class: "field" }, h("label", {}, "Reps visés par série"),
       h("div", { class: "stepper" }, h("button", { onclick: () => step(-1) }, icon("minus")), rb, h("button", { onclick: () => step(1) }, icon("plus")))),
+    h("div", { class: "toggle", style: "padding-top:0" }, h("span", {}, h("span", { style: "display:block;font-size:14.5px" }, "Machine assistée"),
+      h("small", { class: "muted", style: "font-size:12.5px" }, "Moins de kilos = plus dur (traction, dips…)")), assist),
     h("div", { class: "field" }, h("label", {}, "Réglage machine (gardé d'une séance à l'autre)"), set),
     h("div", { class: "field" }, h("label", {}, "Note du jour"), note));
 
@@ -1010,12 +1018,14 @@ function exSheet(s, e) {
     h("button", { class: "btn primary", onclick: () => {
       const n = name.value.trim();
       if (!n) { name.focus(); return; }
+      db.assisted ||= {};
+      if (assist.classList.contains("on")) db.assisted[norm(n)] = true; else delete db.assisted[norm(n)];
       if (isNew) {
         const last = history(n)[0];
         s.exercises.push({ id: uid(), name: n, reps, set: set.value.trim(), note: note.value.trim(), sets: last ? blankRows(last.e) : [] });
       } else {
         if (everywhere.classList.contains("on") && n !== oldName)
-          db.sessions.forEach(x => x.exercises.forEach(y => { if (norm(y.name) === norm(oldName)) y.name = n; }));
+          { db.sessions.forEach(x => x.exercises.forEach(y => { if (norm(y.name) === norm(oldName)) y.name = n; })); if (norm(oldName) !== norm(n)) delete db.assisted[norm(oldName)]; }
         Object.assign(e, { name: n, reps, set: set.value.trim(), note: note.value.trim() });
       }
       save(); close(); render();
@@ -1109,13 +1119,17 @@ function renderHistory() {
 
 // ---------- Records personnels ----------
 // Compte pour un record : série de travail validée « réussi » ou « moyen » (ou sans symbole dans une séance terminée)
-const countsForPr = (r, s) => !r.wu && r.kg > 0 && (r.mark === "ok" || r.mark === "half" || (s.done && !r.mark));
+// Machine assistée (traction, dips…) : moins de kilos = plus dur, donc « mieux » = plus léger
+const isAssisted = name => !!(db.assisted && db.assisted[norm(name)]);
+const better = (name, a, b) => isAssisted(name) ? a < b : a > b;
+const gainOf = (name, from, to) => !(from > 0) ? null : isAssisted(name) ? (from - to) / from : to / from - 1;
+const countsForPr = (r, s, name) => !r.wu && (r.kg > 0 || isAssisted(name)) && (r.mark === "ok" || r.mark === "half" || (s.done && !r.mark));
 function bestBefore(name, cur) {
   const k = norm(name); let best = null;
   for (const s of db.sessions) {
     if (s.id === cur.id || s.start >= cur.start) continue;
     for (const e of s.exercises) if (norm(e.name) === k)
-      for (const r of e.sets) if (countsForPr(r, s) && (!best || r.kg > best.kg)) best = { kg: r.kg, n: r.n, s };
+      for (const r of e.sets) if (countsForPr(r, s, name) && (!best || better(name, r.kg, best.kg))) best = { kg: r.kg, n: r.n, s };
   }
   return best;
 }
@@ -1124,7 +1138,7 @@ function recordRow(s, e) {
   const prev = bestBefore(e.name, s);
   if (!prev) return null;
   let top = null;
-  for (const r of e.sets) if (countsForPr(r, s) && r.kg > prev.kg && (!top || r.kg > top.kg)) top = r;
+  for (const r of e.sets) if (countsForPr(r, s, e.name) && better(e.name, r.kg, prev.kg) && (!top || better(e.name, r.kg, top.kg))) top = r;
   return top ? { row: top, prev } : null;
 }
 const isRecord = (s, e, r) => { const rr = recordRow(s, e); return !!rr && rr.row === r; };
@@ -1134,14 +1148,14 @@ const prBadge = compact => h("span", { class: "pr" + (compact ? " sm" : ""), tit
 function recordBook() {
   const book = {};
   [...db.sessions].sort((a, b) => a.start.localeCompare(b.start)).forEach(s => s.exercises.forEach(e => {
-    const w = e.sets.filter(r => countsForPr(r, s));
+    const w = e.sets.filter(r => countsForPr(r, s, e.name));
     if (!w.length) return;
-    const top = w.reduce((a, r) => r.kg > a.kg ? r : a);
+    const top = w.reduce((a, r) => better(e.name, r.kg, a.kg) ? r : a);
     const k = norm(e.name);
     const b = book[k] ||= { name: e.name, first: { kg: top.kg, s }, best: null, events: [] };
-    b.name = e.name;
+    b.name = e.name; b.assisted = isAssisted(e.name);
     if (!b.best) b.best = { kg: top.kg, n: top.n, s };
-    else if (top.kg > b.best.kg) { b.events.push({ kg: top.kg, prev: b.best.kg, s }); b.best = { kg: top.kg, n: top.n, s }; }
+    else if (better(e.name, top.kg, b.best.kg)) { b.events.push({ kg: top.kg, prev: b.best.kg, s }); b.best = { kg: top.kg, n: top.n, s }; }
   }));
   return Object.values(book);
 }
@@ -1154,20 +1168,20 @@ function renderRecords(box) {
     h("b", {}, `${nEv} record${nEv > 1 ? "s" : ""} battu${nEv > 1 ? "s" : ""}`)));
   box.append(h("p", { class: "muted", style: "font-size:12.5px;margin:6px 2px 14px" }, "Poids le plus lourd validé (réussi ou moyen) sur chaque exercice. Échauffements, « presque » et « raté » ne comptent pas."));
   book.forEach(b => {
-    const gain = Math.round((b.best.kg - b.first.kg) * 10) / 10;
+    const gain = Math.round((b.assisted ? b.first.kg - b.best.kg : b.best.kg - b.first.kg) * 10) / 10;
     box.append(h("button", { class: "pr-card", onclick: () => openDetail(b.best.s.id) },
       h("span", { class: "ico" }, icon("trophy")),
       h("span", { class: "tx" }, h("b", {}, b.name),
-        h("small", {}, b.events.length ? `Battu ${b.events.length} fois · dernier le ${fmtShort(new Date(b.best.s.start))}` : `Référence du ${fmtShort(new Date(b.best.s.start))}`)),
+        h("small", {}, (b.events.length ? `Battu ${b.events.length} fois · dernier le ${fmtShort(new Date(b.best.s.start))}` : `Référence du ${fmtShort(new Date(b.best.s.start))}`) + (b.assisted ? " · assisté" : ""))),
       h("span", { class: "kg" }, h("b", {}, `${fmtKg(b.best.kg)} kg`),
-        gain > 0 ? h("small", {}, `+${fmtKg(gain)} kg depuis le début`) : h("small", { style: "color:var(--muted)" }, `× ${b.best.n}`))));
+        gain > 0 ? h("small", {}, b.assisted ? `−${fmtNum(gain)} kg d'assistance` : `+${fmtNum(gain)} kg depuis le début`) : h("small", { style: "color:var(--muted)" }, `× ${b.best.n}`))));
   });
 }
 
 // ---------- Progrès : courbes et statistiques ----------
 let progEx = null;
 const asc = (a, b) => a.start.localeCompare(b.start);
-const topRow = (s, e) => { const w = e.sets.filter(r => countsForPr(r, s)); return w.length ? w.reduce((a, r) => r.kg > a.kg ? r : a) : null; };
+const topRow = (s, e) => { const w = e.sets.filter(r => countsForPr(r, s, e.name)); return w.length ? w.reduce((a, r) => better(e.name, r.kg, a.kg) ? r : a) : null; };
 function exSeries(name) {
   const k = norm(name), out = [];
   db.sessions.filter(s => s.done).sort(asc).forEach(s => {
@@ -1182,7 +1196,7 @@ const shortDate = d => d.toLocaleDateString("fr-FR", { day: "numeric", month: "s
 const fmtNum = (v, d = 1) => (Math.round(v * 10 ** d) / 10 ** d).toString().replace(".", ",");
 
 // Courbe (une seule série) avec axe des temps, repère au doigt et info-bulle
-function lineChart(pts, { yFmt, tip, zero }) {
+function lineChart(pts, { yFmt, tip, zero, invert }) {
   const W = Math.max(260, document.getElementById("view-prog").clientWidth - 32 - 30), H = 190, L = 40, R = 12, T = 12, B = 24;
   const ys = pts.map(p => p.y);
   let lo = Math.min(...ys, zero ? 0 : Infinity), hi = Math.max(...ys, zero ? 0 : -Infinity);
@@ -1193,7 +1207,7 @@ function lineChart(pts, { yFmt, tip, zero }) {
   lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
   const t0 = pts[0].x, t1 = pts[pts.length - 1].x;
   const X = t => t1 === t0 ? L + (W - L - R) / 2 : L + (t - t0) / (t1 - t0) * (W - L - R);
-  const Y = v => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  const Y = v => T + (invert ? (v - lo) / (hi - lo) : 1 - (v - lo) / (hi - lo)) * (H - T - B);
   let g = "";
   for (let v = lo; v <= hi + 1e-9; v += step)
     g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)" stroke-width="1"${Math.abs(v) < 1e-9 && zero ? "" : ' stroke-dasharray="2 4"'}/><text class="ax" x="${L - 6}" y="${Y(v) + 3.5}" text-anchor="end">${yFmt(v)}</text>`;
@@ -1203,7 +1217,8 @@ function lineChart(pts, { yFmt, tip, zero }) {
   labs.forEach((p, i) => { const x = X(p.x); if (seen.some(sx => Math.abs(sx - x) < 50)) return; seen.push(x);
     g += `<text class="ax" x="${x}" y="${H - 6}" text-anchor="${i === 0 ? "start" : i === labs.length - 1 ? "end" : "middle"}">${shortDate(new Date(p.x))}</text>`; });
   const line = pts.map((p, i) => `${i ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join("");
-  const area = `${line}L${X(t1).toFixed(1)},${Y(Math.max(lo, 0)).toFixed(1)}L${X(t0).toFixed(1)},${Y(Math.max(lo, 0)).toFixed(1)}Z`;
+  const base = invert ? hi : Math.max(lo, 0);
+  const area = `${line}L${X(t1).toFixed(1)},${Y(base).toFixed(1)}L${X(t0).toFixed(1)},${Y(base).toFixed(1)}Z`;
   const dots = pts.map(p => p.hl
     ? `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="5.5" style="fill:var(--peach);stroke:var(--panel)" stroke-width="2"/>`
     : `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="4" style="fill:var(--accent);stroke:var(--panel)" stroke-width="2"/>`).join("");
@@ -1271,7 +1286,7 @@ function renderProg() {
   const series = book.map(b => ({ b, pts: exSeries(b.name) })).filter(x => x.pts.length);
   const tracked = series.filter(x => x.pts.length >= 2);
   const firstKg = {}; tracked.forEach(x => firstKg[norm(x.b.name)] = x.pts[0].r.kg);
-  const gains = tracked.map(x => x.b.best.kg / x.pts[0].r.kg - 1);
+  const gains = tracked.map(x => gainOf(x.b.name, x.pts[0].r.kg, x.b.best.kg)).filter(v => v != null);
   const avgGain = gains.length ? gains.reduce((a, v) => a + v, 0) / gains.length * 100 : null;
 
   box.append(h("div", { class: "big" },
@@ -1304,27 +1319,28 @@ function renderProg() {
     const cur = opts.find(o => norm(o.b.name) === progEx);
     const sel = h("select", { class: "ex-pick", "aria-label": "Exercice", onchange: ev => { progEx = ev.target.value; renderProg(); } },
       ...opts.map(o => h("option", { value: norm(o.b.name), selected: norm(o.b.name) === progEx || null }, `${o.b.name} (${o.pts.length} séance${o.pts.length > 1 ? "s" : ""})`)));
-    let best = -Infinity;
-    const pts = cur.pts.map(({ s, e, r }) => { const hl = best > -Infinity && r.kg > best; best = Math.max(best, r.kg); return { x: new Date(s.start).getTime(), y: r.kg, hl, s, r, e }; });
+    const as = isAssisted(cur.b.name);
+    let best = null;
+    const pts = cur.pts.map(({ s, e, r }) => { const hl = best != null && better(cur.b.name, r.kg, best); if (best == null || better(cur.b.name, r.kg, best)) best = r.kg; return { x: new Date(s.start).getTime(), y: r.kg, hl, s, r, e }; });
     const card = h("div", { class: "chart-card" }, h("div", { class: "ct" }, "Évolution par exercice"),
-      h("div", { class: "cs" }, "Poids de travail le plus lourd validé à chaque séance. En pêche : record battu."), sel);
-    if (pts.length >= 2) card.append(lineChart(pts, { yFmt: v => fmtNum(v), tip: p =>
+      h("div", { class: "cs" }, as ? "Machine assistée : moins de kilos = mieux, donc la courbe est inversée (vers le haut = progrès). En pêche : record battu." : "Poids de travail le plus lourd validé à chaque séance. En pêche : record battu."), sel);
+    if (pts.length >= 2) card.append(lineChart(pts, { invert: as, yFmt: v => fmtNum(v), tip: p =>
       `<b>${fmtKg(p.y)} kg × ${p.r.n}</b><small>${fmtShort(new Date(p.x))}${p.hl ? " · record" : ""}${p.r.mark ? " · " + MARKS[p.r.mark].label.toLowerCase() : ""}</small>` }));
     else card.append(h("p", { class: "muted", style: "font-size:13px;margin:4px 0" }, `Une seule séance pour l'instant (${fmtKg(pts[0].y)} kg le ${fmtShort(new Date(pts[0].x))}). La courbe apparaît dès la 2e.`));
-    const f = pts[0].y, l = pts[pts.length - 1].y, top = Math.max(...pts.map(p => p.y));
-    const diff = Math.round((l - f) * 10) / 10;
+    const f = pts[0].y, l = pts[pts.length - 1].y, top = best;
+    const diff = Math.round((l - f) * 10) / 10, good = as ? diff < 0 : diff > 0, pct = f > 0 && diff ? Math.round((as ? -diff : diff) / f * 100) : null;
     card.append(h("div", { class: "ex-sum" },
       h("div", {}, h("small", {}, "Début"), h("b", {}, `${fmtKg(f)} kg`)),
       h("div", {}, h("small", {}, "Dernière fois"), h("b", {}, `${fmtKg(l)} kg`)),
-      h("div", {}, h("small", {}, "Évolution"), h("b", { style: diff > 0 ? "color:var(--ok)" : diff < 0 ? "color:var(--fail)" : "" },
-        `${diff > 0 ? "+" : ""}${fmtNum(diff)} kg${f > 0 && diff ? ` (${diff > 0 ? "+" : ""}${Math.round(diff / f * 100)} %)` : ""}`))));
-    if (top > l) card.append(h("p", { class: "muted", style: "font-size:12.5px;margin:8px 2px 0" }, `Record : ${fmtKg(top)} kg.`));
+      h("div", {}, h("small", {}, as ? "Assistance" : "Évolution"), h("b", { style: !diff ? "" : good ? "color:var(--ok)" : "color:var(--fail)" },
+        `${diff > 0 ? "+" : ""}${fmtNum(diff)} kg${pct ? ` (${pct > 0 ? "+" : ""}${pct} %)` : ""}`))));
+    if (better(cur.b.name, top, l)) card.append(h("p", { class: "muted", style: "font-size:12.5px;margin:8px 2px 0" }, `Record : ${fmtKg(top)} kg.`));
     box.append(h("h2", {}, "Par exercice"), card);
   }
 
   // Progression globale au fil des séances
   const gPts = done.map(s => {
-    const rs = s.exercises.map(e => { const k = norm(e.name), r = firstKg[k] && topRow(s, e); return r ? r.kg / firstKg[k] - 1 : null; }).filter(v => v != null);
+    const rs = s.exercises.map(e => { const k = norm(e.name), r = firstKg[k] && topRow(s, e); return r ? gainOf(e.name, firstKg[k], r.kg) : null; }).filter(v => v != null);
     return rs.length ? { x: new Date(s.start).getTime(), y: rs.reduce((a, v) => a + v, 0) / rs.length * 100, s, n: rs.length } : null;
   }).filter(Boolean);
   if (gPts.length >= 2) {
@@ -1460,7 +1476,7 @@ const fmtStamp = iso => { const d = new Date(iso); return `${d.toLocaleDateStrin
 
 async function exportData() {
   const name = `fonte-${dateInput(new Date())}.json`;
-  const blob = new Blob([JSON.stringify({ app: "fonte", v: 1, exportedAt: new Date().toISOString(), sessions: db.sessions }, null, 1)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ app: "fonte", v: 1, exportedAt: new Date().toISOString(), sessions: db.sessions, assisted: db.assisted || {} }, null, 1)], { type: "application/json" });
   const f = new File([blob], name, { type: "application/json" });
   if (navigator.canShare && navigator.canShare({ files: [f] })) {
     try { await navigator.share({ files: [f], title: name }); markExported(); return; }
@@ -1494,12 +1510,13 @@ function importFile(f) {
       h("p", { class: "muted", style: "margin:0;font-size:13px" }, "Un point de restauration est créé avant, tu peux revenir en arrière.")), [
       h("button", { class: "btn", onclick: () => {
         close(); snapshot("Avant import (ajout)");
+        if (d.assisted) db.assisted = { ...(db.assisted || {}), ...d.assisted };
         db.sessions.push(...missing); save(); render();
         toast(missing.length ? `${missing.length} séance${missing.length > 1 ? "s" : ""} ajoutée${missing.length > 1 ? "s" : ""}` : "Rien de nouveau à ajouter");
       } }, `Ajouter les manquantes (${missing.length})`),
       h("button", { class: "btn primary", onclick: () => {
         close(); snapshot("Avant import (remplacement)");
-        db.sessions = list; save(); show("home"); toast("Sauvegarde restaurée");
+        db.sessions = list; db.assisted = { ...(d.assisted || {}) }; save(); show("home"); toast("Sauvegarde restaurée");
       } }, "Tout remplacer")
     ]);
   });

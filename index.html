@@ -538,10 +538,13 @@ const working = e => e.sets.filter(r => !r.wu);
 const blankRows = e => e.sets.map(r => ({ kg: r.kg, n: r.n, reps: r.reps, wu: r.wu, mark: null }));
 
 // La séance « logique » = celle qu'on n'a pas faite depuis le plus longtemps
+// Parmi les types faits dans les 4 semaines avant la dernière séance (les vieux types abandonnés ne comptent plus)
 function nextType() {
   const lasts = types().map(t => ({ t, s: lastOfType(t) })).filter(x => x.s);
-  if (lasts.length < 2) return null;
-  return lasts.sort((a, b) => a.s.start.localeCompare(b.s.start))[0];
+  if (!lasts.length) return null;
+  const newest = new Date(lasts.reduce((a, x) => x.s.start > a ? x.s.start : a, "")).getTime();
+  const recent = lasts.filter(x => newest - new Date(x.s.start).getTime() <= 28 * 864e5);
+  return recent.sort((a, b) => a.s.start.localeCompare(b.s.start))[0];
 }
 const daysAgo = d => Math.round((new Date(dateInput(new Date()) + "T12:00:00") - new Date(dateInput(d) + "T12:00:00")) / 864e5);
 const agoText = n => n === 0 ? "aujourd'hui" : n === 1 ? "hier" : `il y a ${n} jours`;
@@ -670,7 +673,7 @@ function renderHome() {
 
   const month = dateInput(now).slice(0, 7);
   const inMonth = done.filter(s => s.start.startsWith(month));
-  const okSets = inMonth.reduce((a, s) => a + s.exercises.reduce((b, e) => b + working(e).filter(r => r.mark === "ok").reduce((c, r) => c + r.n, 0), 0), 0);
+  const okSets = inMonth.reduce((a, s) => a + s.exercises.reduce((b, e) => b + working(e).filter(r => r.mark === "ok" || !r.mark).reduce((c, r) => c + r.n, 0), 0), 0);
   box.append(h("div", { class: "metrics", style: "margin-top:8px" },
     h("div", { class: "metric" }, h("small", {}, "Séances"), h("b", {}, done.length)),
     h("div", { class: "metric" }, h("small", {}, "Ce mois-ci"), h("b", {}, inMonth.length)),
@@ -1298,7 +1301,7 @@ function renderProg() {
   const weeks = Math.max(1, Math.ceil((daysAgo(first) + 1) / 7));
   let vol = 0; const cnt = { ok: 0, near: 0, half: 0, fail: 0 };
   done.forEach(s => s.exercises.forEach(e => working(e).forEach(r => {
-    if (r.mark) cnt[r.mark] += r.n;
+    cnt[r.mark || "ok"] += r.n; // sans symbole dans une séance terminée = faite
     if (r.kg > 0 && r.mark !== "fail") vol += r.kg * r.n * (r.reps || e.reps);
   })));
   const marked = cnt.ok + cnt.near + cnt.half + cnt.fail;
@@ -1366,7 +1369,7 @@ function renderProg() {
   if (marked) {
     const col = { ok: "var(--ok)", near: "var(--near)", half: "var(--half)", fail: "var(--fail)" };
     box.append(h("h2", {}, "Résultats de tes séries"), h("div", { class: "chart-card" },
-      h("div", { class: "cs", style: "margin-top:0" }, `${marked} séries notées`),
+      h("div", { class: "cs", style: "margin-top:0" }, `${marked} séries · sans symbole = réussie`),
       h("div", { class: "stack" }, ...MARK_ORDER.filter(m => cnt[m]).map(m => h("span", { style: `flex:${cnt[m]};background:${col[m]}`, title: MARKS[m].label }))),
       h("div", { class: "mleg" }, ...MARK_ORDER.map(m => h("span", {}, h("span", { class: "c-" + m, html: ic(m), style: "display:contents" }), MARKS[m].label,
         h("em", {}, `${Math.round(cnt[m] / marked * 100)} %`))))));
